@@ -8,7 +8,10 @@ const serve = process.argv.includes('--serve');
 
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
-for (const f of ['index.html', 'styles.css', 'favicon.svg']) fs.copyFileSync(path.join(root, 'web', f), path.join(out, f));
+for (const f of ['styles.css', 'favicon.svg']) fs.copyFileSync(path.join(root, 'web', f), path.join(out, f));
+// version the asset URLs so a new deploy is never served from the browser cache (GitHub Pages caches files for 10 minutes)
+const v = Date.now().toString(36);
+fs.writeFileSync(path.join(out, 'index.html'), fs.readFileSync(path.join(root, 'web', 'index.html'), 'utf8').replace('styles.css', 'styles.css?v=' + v).replace('app.js', 'app.js?v=' + v));
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
 
 const opts = { entryPoints: [path.join(root, 'web', 'main.ts')], bundle: true, outfile: path.join(out, 'app.js'), target: 'es2019', minify: !serve, sourcemap: serve };
