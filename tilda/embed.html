@@ -4,6 +4,7 @@
         style="display:block;width:100%;min-height:900px;border:0"></iframe>
 <script>
   window.addEventListener('message', function (e) {
+    if (e.origin !== 'https://yemirades.github.io') return;
     if (e.data && e.data.type === 'mycar-qr-height') {
       document.getElementById('mycar-qr').style.height = e.data.height + 'px';
     }
