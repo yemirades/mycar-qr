@@ -22,7 +22,7 @@ const T: Record<Lang, Record<string, string>> = {
     smallShape: 'Модули меньше 0,7 читаются хуже — проверьте код сканером.',
     ecHint: 'Чем выше уровень, тем лучше код переносит повреждения и логотип, но тем плотнее он становится.',
     pMycarD: 'Mycar', pMycarI: 'Mycar инверс', pAutoD: 'Autocheck', pAutoI: 'Autocheck инверс', pAzure: 'Azure', pMeadow: 'Meadow', pCherry: 'Cherry', pMandarin: 'Mandarin', pPersea: 'Persea', pSunset: 'Закат', pOcean: 'Океан', pHearts: 'Сердца', pStars: 'Звёзды',
-    sSquare: 'Квадрат', sRounded: 'Скруглённый', sCircle: 'Круг', sHeart: 'Сердце', sDiamond: 'Ромб', sSparkle: 'Звезда', sLeaf: 'Лист', sHex: 'Шестиугольник', sExtra: 'Мягкий квадрат',
+    sLiquid: 'Связанные', sSquare: 'Квадрат', sRounded: 'Скруглённый', sCircle: 'Круг', sHeart: 'Сердце', sDiamond: 'Ромб', sSparkle: 'Звезда', sLeaf: 'Лист', sHex: 'Шестиугольник', sExtra: 'Мягкий квадрат',
   },
   en: {
     tagline: 'Branded QR codes for Mycar and Autocheck', theme: 'Toggle theme',
@@ -42,7 +42,7 @@ const T: Record<Lang, Record<string, string>> = {
     smallShape: 'Shapes below 0.7 scan less reliably — test the code with a scanner.',
     ecHint: 'Higher levels survive damage and a logo better, but make the code denser.',
     pMycarD: 'Mycar', pMycarI: 'Mycar inverse', pAutoD: 'Autocheck', pAutoI: 'Autocheck inverse', pAzure: 'Azure', pMeadow: 'Meadow', pCherry: 'Cherry', pMandarin: 'Mandarin', pPersea: 'Persea', pSunset: 'Sunset', pOcean: 'Ocean', pHearts: 'Hearts', pStars: 'Stars',
-    sSquare: 'Square', sRounded: 'Rounded', sCircle: 'Circle', sHeart: 'Heart', sDiamond: 'Diamond', sSparkle: 'Sparkle', sLeaf: 'Leaf', sHex: 'Hexagon', sExtra: 'Soft square',
+    sLiquid: 'Linked', sSquare: 'Square', sRounded: 'Rounded', sCircle: 'Circle', sHeart: 'Heart', sDiamond: 'Diamond', sSparkle: 'Sparkle', sLeaf: 'Leaf', sHex: 'Hexagon', sExtra: 'Soft square',
   },
 };
 let lang: Lang = 'ru';
@@ -65,7 +65,33 @@ const SHAPES: Record<string, ShapeFn> = {
   square: (x, y, s) => rr(x, y, s, s, [0, 0, 0, 0]),
   circle: (x, y, s) => rr(x, y, s, s, [s / 2, s / 2, s / 2, s / 2]),
 };
-const MODULE_SHAPES: [string, string][] = [['square', 'sSquare'], ['circle', 'sCircle']];
+const MODULE_SHAPES: [string, string][] = [['square', 'sSquare'], ['circle', 'sCircle'], ['liquid', 'sLiquid']];
+
+/**
+ * "Linked" modules (Autocheck guide): neighbouring dark modules merge into one shape,
+ * and a corner is rounded only where it has no neighbour on either side of it.
+ * A lone module becomes a circle, the end of a line becomes a pill.
+ * dark(r, c): the module is drawn; joined(r, c): counts as a neighbour for rounding (dark or part of the logo hole).
+ */
+function liquid(rows: number, cols: number, dark: (r: number, c: number) => boolean, joined: (r: number, c: number) => boolean, m: number, scale: number): string {
+  const s = m * scale;
+  const off = (m - s) / 2;
+  const ov = scale >= 1 ? m * 0.015 : 0; // tiny overlap hides hairline seams between merged modules
+  const R = s / 2;
+  let d = '';
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (!dark(r, c)) continue;
+      const up = joined(r - 1, c), dn = joined(r + 1, c), lf = joined(r, c - 1), rt = joined(r, c + 1);
+      const x = c * m + off - (lf && dark(r, c - 1) ? ov : 0);
+      const y = r * m + off - (up && dark(r - 1, c) ? ov : 0);
+      const w = s + (lf && dark(r, c - 1) ? ov : 0) + (rt && dark(r, c + 1) ? ov : 0);
+      const h = s + (up && dark(r - 1, c) ? ov : 0) + (dn && dark(r + 1, c) ? ov : 0);
+      d += rr(x, y, w, h, [!up && !lf ? R : 0, !up && !rt ? R : 0, !dn && !rt ? R : 0, !dn && !lf ? R : 0]);
+    }
+  }
+  return d;
+}
 
 /** Marker outline: ring made of an outer and an inner shape (even-odd fill). m = module size, 7x7 modules box at (ox, oy). */
 const OUTLINES: Record<string, (ox: number, oy: number, m: number) => string> = {
@@ -109,11 +135,12 @@ interface PresetDef { id: string; label: string; swatch: string; apply: Partial<
 const solid = (c: string, bg = '#FFFFFF'): Partial<State> => ({ colorMode: 'solid', c1: c, c2: c, bg, m1: c, m2: c, markersSame: true, transparent: false });
 const grad = (c1: string, c2: string): Partial<State> => ({ colorMode: 'gradient', dir: 'diag', c1, c2, bg: '#FFFFFF', m1: c1, m2: c2, markersSame: true, transparent: false });
 const brandLook: Partial<State> = { dots: 'circle', outline: 'extra', core: 'circle', scale: 1 };
+const autocheckLook: Partial<State> = { dots: 'liquid', outline: 'rounded', core: 'rounded', scale: 1 };
 const PRESETS: PresetDef[] = [
   { id: 'mycar-default', label: 'pMycarD', swatch: 'linear-gradient(90deg,#000 50%,#fff 50%)', apply: { ...solid('#000000'), ...brandLook, logo: 'mycar' } },
   { id: 'mycar-inverse', label: 'pMycarI', swatch: 'linear-gradient(90deg,#fff 50%,#000 50%)', apply: { ...solid('#FFFFFF', '#000000'), ...brandLook, logo: 'mycar' } },
-  { id: 'autocheck-default', label: 'pAutoD', swatch: '#000', apply: { ...solid('#000000'), ...brandLook, logo: 'autocheck' } },
-  { id: 'autocheck-inverse', label: 'pAutoI', swatch: '#fff', apply: { ...solid('#FFFFFF', '#000000'), ...brandLook, logo: 'autocheck' } },
+  { id: 'autocheck-default', label: 'pAutoD', swatch: '#000', apply: { ...solid('#000000'), ...autocheckLook, logo: 'autocheck' } },
+  { id: 'autocheck-inverse', label: 'pAutoI', swatch: '#fff', apply: { ...solid('#FFFFFF', '#000000'), ...autocheckLook, logo: 'autocheck' } },
 ];
 
 /* ---------- payload ---------- */
@@ -167,16 +194,18 @@ function buildSvg(text: string, outSize: number): string {
     return Math.abs(x - cx0) < (cfg.clearW * ls * inner) / 2 + pad && Math.abs(y - cx0) < (cfg.clearH * ls * inner) / 2 + pad;
   };
 
-  const shape = SHAPES[state.dots] || SHAPES.circle;
-  const s = m * state.scale + (state.dots === 'square' && state.scale >= 1 ? m * 0.01 : 0);
-  const off = (m - s) / 2;
+  const isCleared = (r: number, c: number) => cleared(c * m + m / 2, r * m + m / 2);
+  const dark = (r: number, c: number) => r >= 0 && c >= 0 && r < n && c < n && q.isDark(r, c) && !inFinder(r, c) && !isCleared(r, c);
   let modules = '';
-  for (let r = 0; r < n; r++) {
-    for (let c = 0; c < n; c++) {
-      if (!q.isDark(r, c) || inFinder(r, c)) continue;
-      if (cleared(c * m + m / 2, r * m + m / 2)) continue;
-      modules += shape(c * m + off, r * m + off, s);
-    }
+  if (state.dots === 'liquid') {
+    // cells inside the logo hole count as neighbours, so the edge along the hole stays flat
+    const joined = (r: number, c: number) => dark(r, c) || (r >= 0 && c >= 0 && r < n && c < n && !inFinder(r, c) && isCleared(r, c));
+    modules = liquid(n, n, dark, joined, m, state.scale);
+  } else {
+    const shape = SHAPES[state.dots] || SHAPES.circle;
+    const sz = m * state.scale + (state.dots === 'square' && state.scale >= 1 ? m * 0.01 : 0);
+    const off = (m - sz) / 2;
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (dark(r, c)) modules += shape(c * m + off, r * m + off, sz);
   }
 
   const useGrad = state.colorMode === 'gradient';
@@ -273,7 +302,12 @@ function iconChips(el: HTMLElement, items: [string, string][], icon: (id: string
     el.appendChild(b);
   });
 }
+const LIQUID_ICON = ['111', '010', '101'];
 const moduleIcon = (id: string) => {
+  if (id === 'liquid') {
+    const on = (r: number, c: number) => r >= 0 && c >= 0 && r < 3 && c < 3 && LIQUID_ICON[r][c] === '1';
+    return `<g transform="translate(5 5)"><path d="${liquid(3, 3, on, on, 10, 1)}"/></g>`;
+  }
   let d = ''; const sh = SHAPES[id];
   for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) d += sh(5 + c * 10.5, 5 + r * 10.5, 9);
   return `<path d="${d}"/>`;
