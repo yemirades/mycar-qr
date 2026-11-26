@@ -38,8 +38,7 @@
   <div class="col">
     <section class="card">
       <h2 data-i18n="content"></h2>
-      <div class="tabs" id="typeTabs" role="tablist"></div>
-      <div id="typePanels"></div>
+      <label class="field"><span data-i18n="contentLabel"></span><input type="text" id="content" autocomplete="off" spellcheck="false" placeholder="https://mycar.kz"></label>
     </section>
 
     <section class="card">
@@ -55,18 +54,21 @@
         <div class="seg" id="logoSeg" role="group"></div>
       </div>
 
+      <div id="logoScaleSlider" class="group"></div>
+
       <div class="group">
         <div class="label" data-i18n="modules"></div>
-        <div class="chips" id="dotChips"></div>
+        <div class="icon-chips" id="dotChips"></div>
       </div>
+      <div id="scaleSlider" class="group"></div>
       <div class="row2">
         <div class="group">
           <div class="label" data-i18n="markerOutline"></div>
-          <div class="chips" id="cornerSqChips"></div>
+          <div class="icon-chips" id="cornerSqChips"></div>
         </div>
         <div class="group">
           <div class="label" data-i18n="markerCore"></div>
-          <div class="chips" id="cornerDotChips"></div>
+          <div class="icon-chips" id="cornerDotChips"></div>
         </div>
       </div>
 
@@ -84,6 +86,7 @@
         <div class="seg" id="dirSeg" role="group"></div>
       </div>
 
+      <div id="bgRadiusSlider" class="group"></div>
       <label class="toggle-row"><input type="checkbox" id="transparent" class="toggle"><span data-i18n="transparent"></span></label>
       <label class="toggle-row"><input type="checkbox" id="markersSame" class="toggle" checked><span data-i18n="markersSame"></span></label>
       <div class="colors" id="markerColors" hidden>

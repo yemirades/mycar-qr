@@ -1,4 +1,3 @@
-import QRCodeStyling from 'qr-code-styling';
 import qrcode from 'qrcode-generator';
 import { LOGOS, buildLogoGroup, LogoSpec } from '../src/logo';
 
@@ -6,148 +5,162 @@ import { LOGOS, buildLogoGroup, LogoSpec } from '../src/logo';
 type Lang = 'ru' | 'en';
 const T: Record<Lang, Record<string, string>> = {
   ru: {
-    tagline: 'Фирменные QR-коды Mycar и Autocheck',
-    theme: 'Сменить тему', content: 'Контент', style: 'Стиль', params: 'Параметры',
-    presets: 'Готовые стили', logo: 'Логотип в центре', modules: 'Модули', markerOutline: 'Контур маркера', markerCore: 'Ядро маркера',
-    color: 'Цвет', color1: 'Цвет 1', color2: 'Цвет 2', background: 'Фон', direction: 'Направление',
+    tagline: 'Фирменные QR-коды Mycar и Autocheck', theme: 'Сменить тему',
+    content: 'Содержимое', contentLabel: 'Ссылка или текст', style: 'Стиль', params: 'Параметры',
+    presets: 'Готовые стили', logo: 'Логотип в центре', logoSize: 'Размер логотипа',
+    modules: 'Модули', shapeSize: 'Размер модуля', markerOutline: 'Контур маркера', markerCore: 'Ядро маркера',
+    color: 'Цвет', color1: 'Цвет 1', color2: 'Цвет 2', background: 'Фон', direction: 'Направление', bgRadius: 'Скругление фона',
     transparent: 'Прозрачный фон', markersSame: 'Маркеры того же цвета, что и модули',
     pngSize: 'Размер PNG', quiet: 'Тихая зона', ec: 'Коррекция ошибок',
     payload: 'Что попадёт в код', downloadPng: 'Скачать PNG', downloadSvg: 'Скачать SVG', copyPng: 'Скопировать PNG',
     footer: 'Всё считается в вашем браузере — данные никуда не отправляются.',
-    none: 'Нет', solid: 'Сплошной', gradient: 'Градиент', linear: 'Линейный', radial: 'Радиальный', diag: 'Диагональ', horiz: 'Горизонталь', vert: 'Вертикаль',
+    none: 'Нет', solid: 'Сплошной', gradient: 'Градиент', radial: 'Радиальный', diag: 'Диагональ', horiz: 'Горизонталь', vert: 'Вертикаль',
     modules4: '4 модуля', modules2: '2 модуля', modules0: 'Без отступа',
-    empty: 'Заполните контент слева,\nчтобы увидеть код', copied: 'PNG скопирован', copyFail: 'Не удалось скопировать — скачайте файл',
+    empty: 'Введите ссылку или текст,\nчтобы увидеть код', copied: 'PNG скопирован', copyFail: 'Не удалось скопировать — скачайте файл',
     lowContrast: 'Низкий контраст между кодом и фоном — такой QR может не считаться.',
-    noLogoEc: 'С логотипом коррекция ошибок будет повышена до Q или H.',
+    noLogoEc: 'С логотипом коррекция ошибок будет повышена до Q.',
+    smallShape: 'Модули меньше 0,7 читаются хуже — проверьте код сканером.',
     ecHint: 'Чем выше уровень, тем лучше код переносит повреждения и логотип, но тем плотнее он становится.',
-    tLink: 'Ссылка', tText: 'Текст', tWifi: 'Wi-Fi', tEmail: 'E-mail', tContact: 'Контакт',
-    fUrl: 'Адрес ссылки', fText: 'Текст', fSsid: 'Название сети', fPass: 'Пароль', fSec: 'Защита', fHidden: 'Скрытая сеть', secNone: 'Без пароля',
-    fTo: 'Кому', fSubject: 'Тема', fBody: 'Сообщение', fFirst: 'Имя', fLast: 'Фамилия', fOrg: 'Компания', fJob: 'Должность', fPhone: 'Телефон', fMail: 'E-mail', fSite: 'Сайт',
-    pMycarD: 'Mycar', pMycarI: 'Mycar инверс', pAutoD: 'Autocheck', pAutoI: 'Autocheck инверс', pAzure: 'Azure', pMeadow: 'Meadow', pCherry: 'Cherry', pMandarin: 'Mandarin', pPersea: 'Persea', pSunset: 'Закат', pOcean: 'Океан',
-    dSquare: 'Квадрат', dDots: 'Точки', dRounded: 'Скруглённые', dExtra: 'Мягкие', dClassy: 'Классика', dClassyR: 'Классика+', cSquare: 'Квадрат', cDot: 'Круг',
+    pMycarD: 'Mycar', pMycarI: 'Mycar инверс', pAutoD: 'Autocheck', pAutoI: 'Autocheck инверс', pAzure: 'Azure', pMeadow: 'Meadow', pCherry: 'Cherry', pMandarin: 'Mandarin', pPersea: 'Persea', pSunset: 'Закат', pOcean: 'Океан', pHearts: 'Сердца', pStars: 'Звёзды',
+    sSquare: 'Квадрат', sRounded: 'Скруглённый', sCircle: 'Круг', sHeart: 'Сердце', sDiamond: 'Ромб', sSparkle: 'Звезда', sLeaf: 'Лист', sHex: 'Шестиугольник', sExtra: 'Мягкий квадрат',
   },
   en: {
-    tagline: 'Branded QR codes for Mycar and Autocheck',
-    theme: 'Toggle theme', content: 'Content', style: 'Style', params: 'Parameters',
-    presets: 'Ready-made presets', logo: 'Center logo', modules: 'Modules', markerOutline: 'Marker outline', markerCore: 'Marker core',
-    color: 'Color', color1: 'Color 1', color2: 'Color 2', background: 'Background', direction: 'Direction',
+    tagline: 'Branded QR codes for Mycar and Autocheck', theme: 'Toggle theme',
+    content: 'Content', contentLabel: 'Link or text', style: 'Style', params: 'Parameters',
+    presets: 'Ready-made presets', logo: 'Center logo', logoSize: 'Logo size',
+    modules: 'Modules', shapeSize: 'Shape size', markerOutline: 'Marker outline', markerCore: 'Marker core',
+    color: 'Color', color1: 'Color 1', color2: 'Color 2', background: 'Background', direction: 'Direction', bgRadius: 'Background radius',
     transparent: 'Transparent background', markersSame: 'Markers use the modules color',
     pngSize: 'PNG size', quiet: 'Quiet zone', ec: 'Error correction',
     payload: 'What goes into the code', downloadPng: 'Download PNG', downloadSvg: 'Download SVG', copyPng: 'Copy PNG',
     footer: 'Everything runs in your browser — nothing is sent anywhere.',
-    none: 'None', solid: 'Solid', gradient: 'Gradient', linear: 'Linear', radial: 'Radial', diag: 'Diagonal', horiz: 'Horizontal', vert: 'Vertical',
+    none: 'None', solid: 'Solid', gradient: 'Gradient', radial: 'Radial', diag: 'Diagonal', horiz: 'Horizontal', vert: 'Vertical',
     modules4: '4 modules', modules2: '2 modules', modules0: 'None',
-    empty: 'Fill in the content on the left\nto see the code', copied: 'PNG copied', copyFail: 'Copy failed — download the file instead',
+    empty: 'Enter a link or text\nto see the code', copied: 'PNG copied', copyFail: 'Copy failed — download the file instead',
     lowContrast: 'Low contrast between code and background — it may not scan.',
-    noLogoEc: 'With a logo, error correction is raised to Q or H.',
+    noLogoEc: 'With a logo, error correction is raised to Q.',
+    smallShape: 'Shapes below 0.7 scan less reliably — test the code with a scanner.',
     ecHint: 'Higher levels survive damage and a logo better, but make the code denser.',
-    tLink: 'Link', tText: 'Text', tWifi: 'Wi-Fi', tEmail: 'Email', tContact: 'Contact',
-    fUrl: 'Link address', fText: 'Text', fSsid: 'Network name', fPass: 'Password', fSec: 'Security', fHidden: 'Hidden network', secNone: 'No password',
-    fTo: 'To', fSubject: 'Subject', fBody: 'Message', fFirst: 'First name', fLast: 'Last name', fOrg: 'Company', fJob: 'Job title', fPhone: 'Phone', fMail: 'Email', fSite: 'Website',
-    pMycarD: 'Mycar', pMycarI: 'Mycar inverse', pAutoD: 'Autocheck', pAutoI: 'Autocheck inverse', pAzure: 'Azure', pMeadow: 'Meadow', pCherry: 'Cherry', pMandarin: 'Mandarin', pPersea: 'Persea', pSunset: 'Sunset', pOcean: 'Ocean',
-    dSquare: 'Square', dDots: 'Dots', dRounded: 'Rounded', dExtra: 'Soft', dClassy: 'Classy', dClassyR: 'Classy+', cSquare: 'Square', cDot: 'Round',
+    pMycarD: 'Mycar', pMycarI: 'Mycar inverse', pAutoD: 'Autocheck', pAutoI: 'Autocheck inverse', pAzure: 'Azure', pMeadow: 'Meadow', pCherry: 'Cherry', pMandarin: 'Mandarin', pPersea: 'Persea', pSunset: 'Sunset', pOcean: 'Ocean', pHearts: 'Hearts', pStars: 'Stars',
+    sSquare: 'Square', sRounded: 'Rounded', sCircle: 'Circle', sHeart: 'Heart', sDiamond: 'Diamond', sSparkle: 'Sparkle', sLeaf: 'Leaf', sHex: 'Hexagon', sExtra: 'Soft square',
   },
 };
-
 let lang: Lang = 'ru';
-try { const s = localStorage.getItem('mq-lang'); if (s === 'ru' || s === 'en') lang = s; else if (!navigator.language.startsWith('ru') && !navigator.language.startsWith('kk')) lang = 'en'; } catch { /* noop */ }
+try { const s = localStorage.getItem('mq-lang'); if (s === 'ru' || s === 'en') lang = s; else if (!/^(ru|kk)/.test(navigator.language)) lang = 'en'; } catch { /* noop */ }
 const t = (k: string) => T[lang][k] ?? k;
 
-/* ---------- state ---------- */
-type DotType = 'square' | 'dots' | 'rounded' | 'extra-rounded' | 'classy' | 'classy-rounded';
-type CornerSq = 'square' | 'dot' | 'extra-rounded';
-type CornerDot = 'square' | 'dot';
-type LogoId = 'none' | 'mycar' | 'autocheck';
-type ContentType = 'link' | 'text' | 'wifi' | 'email' | 'contact';
-type Dir = 'diag' | 'horiz' | 'vert';
+/* ---------- geometry ---------- */
+const K = 0.5523;
+const f = (n: number) => (Math.round(n * 100) / 100).toString();
 
-interface State {
-  type: ContentType;
-  fields: Record<string, string>;
-  dots: DotType; cornerSq: CornerSq; cornerDot: CornerDot;
-  logo: LogoId;
-  colorMode: 'solid' | 'gradient'; gradKind: 'linear' | 'radial'; dir: Dir;
-  c1: string; c2: string; bg: string; transparent: boolean;
-  markersSame: boolean; m1: string; m2: string;
-  ec: 'L' | 'M' | 'Q' | 'H'; quiet: number; size: number;
-  preset: string;
+/** Rounded rectangle with individual radii (tl, tr, br, bl), absolute path commands only. */
+function rr(x: number, y: number, w: number, h: number, [a, b, c, d]: number[]): string {
+  return `M${f(x + a)} ${f(y)}L${f(x + w - b)} ${f(y)}C${f(x + w - b + b * K)} ${f(y)} ${f(x + w)} ${f(y + b - b * K)} ${f(x + w)} ${f(y + b)}` +
+    `L${f(x + w)} ${f(y + h - c)}C${f(x + w)} ${f(y + h - c + c * K)} ${f(x + w - c + c * K)} ${f(y + h)} ${f(x + w - c)} ${f(y + h)}` +
+    `L${f(x + d)} ${f(y + h)}C${f(x + d - d * K)} ${f(y + h)} ${f(x)} ${f(y + h - d + d * K)} ${f(x)} ${f(y + h - d)}` +
+    `L${f(x)} ${f(y + a)}C${f(x)} ${f(y + a - a * K)} ${f(x + a - a * K)} ${f(y)} ${f(x + a)} ${f(y)}Z`;
 }
+/** Transforms a unit-box path (M, L, C, Z with absolute coordinates) into the box (x, y, s). */
+function tr(d: string, x: number, y: number, s: number): string {
+  let i = 0;
+  return d.replace(/-?\d*\.\d+|-?\d+/g, (n) => f((i++ % 2 === 0 ? x : y) + parseFloat(n) * s));
+}
+const poly = (pts: number[][]) => 'M' + pts.map((p) => `${f(p[0])} ${f(p[1])}`).join('L') + 'Z';
 
+const HEART = 'M.5 .93 C.12 .64 0 .45 0 .29 C0 .13 .12 .03 .26 .03 C.37 .03 .46 .09 .5 .19 C.54 .09 .63 .03 .74 .03 C.88 .03 1 .13 1 .29 C1 .45 .88 .64 .5 .93Z';
+const SPARKLE = 'M.5 0 C.5 .3 .7 .5 1 .5 C.7 .5 .5 .7 .5 1 C.5 .7 .3 .5 0 .5 C.3 .5 .5 .3 .5 0Z';
+
+type ShapeFn = (x: number, y: number, s: number) => string;
+const SHAPES: Record<string, ShapeFn> = {
+  square: (x, y, s) => rr(x, y, s, s, [0, 0, 0, 0]),
+  rounded: (x, y, s) => rr(x, y, s, s, [s * 0.3, s * 0.3, s * 0.3, s * 0.3]),
+  circle: (x, y, s) => rr(x, y, s, s, [s / 2, s / 2, s / 2, s / 2]),
+  heart: (x, y, s) => tr(HEART, x, y, s),
+  diamond: (x, y, s) => poly([[x + s / 2, y], [x + s, y + s / 2], [x + s / 2, y + s], [x, y + s / 2]]),
+  sparkle: (x, y, s) => tr(SPARKLE, x, y, s),
+  leaf: (x, y, s) => rr(x, y, s, s, [s / 2, 0, s / 2, 0]),
+  hex: (x, y, s) => poly([[x + s / 2, y], [x + s * 0.93, y + s * 0.25], [x + s * 0.93, y + s * 0.75], [x + s / 2, y + s], [x + s * 0.07, y + s * 0.75], [x + s * 0.07, y + s * 0.25]]),
+};
+const MODULE_SHAPES: [string, string][] = [['square', 'sSquare'], ['rounded', 'sRounded'], ['circle', 'sCircle'], ['heart', 'sHeart'], ['diamond', 'sDiamond'], ['sparkle', 'sSparkle'], ['leaf', 'sLeaf'], ['hex', 'sHex']];
+
+/** Marker outline: ring made of an outer and an inner shape (even-odd fill). m = module size, 7x7 modules box at (ox, oy). */
+const OUTLINES: Record<string, (ox: number, oy: number, m: number) => string> = {
+  square: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [0, 0, 0, 0]) + rr(ox + m, oy + m, 5 * m, 5 * m, [0, 0, 0, 0]),
+  rounded: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [2 * m, 2 * m, 2 * m, 2 * m]) + rr(ox + m, oy + m, 5 * m, 5 * m, [1.1 * m, 1.1 * m, 1.1 * m, 1.1 * m]),
+  extra: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [3 * m, 3 * m, 3 * m, 3 * m]) + rr(ox + m, oy + m, 5 * m, 5 * m, [2 * m, 2 * m, 2 * m, 2 * m]),
+  circle: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [3.5 * m, 3.5 * m, 3.5 * m, 3.5 * m]) + rr(ox + m, oy + m, 5 * m, 5 * m, [2.5 * m, 2.5 * m, 2.5 * m, 2.5 * m]),
+  diamond: (ox, oy, m) => {
+    const cx = ox + 3.5 * m, cy = oy + 3.5 * m, R = 3.8 * m, r = 2.5 * m;
+    return poly([[cx, cy - R], [cx + R, cy], [cx, cy + R], [cx - R, cy]]) + poly([[cx, cy - r], [cx + r, cy], [cx, cy + r], [cx - r, cy]]);
+  },
+  leaf: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [3.5 * m, 0, 3.5 * m, 0]) + rr(ox + m, oy + m, 5 * m, 5 * m, [2.5 * m, 0, 2.5 * m, 0]),
+};
+const OUTLINE_LIST: [string, string][] = [['square', 'sSquare'], ['rounded', 'sRounded'], ['extra', 'sExtra'], ['circle', 'sCircle'], ['diamond', 'sDiamond'], ['leaf', 'sLeaf']];
+
+const CORES: Record<string, (cx: number, cy: number, m: number) => string> = {
+  square: (cx, cy, m) => SHAPES.square(cx - 1.5 * m, cy - 1.5 * m, 3 * m),
+  rounded: (cx, cy, m) => SHAPES.rounded(cx - 1.5 * m, cy - 1.5 * m, 3 * m),
+  circle: (cx, cy, m) => SHAPES.circle(cx - 1.5 * m, cy - 1.5 * m, 3 * m),
+  heart: (cx, cy, m) => SHAPES.heart(cx - 1.75 * m, cy - 1.75 * m, 3.5 * m),
+  diamond: (cx, cy, m) => SHAPES.diamond(cx - 1.9 * m, cy - 1.9 * m, 3.8 * m),
+  sparkle: (cx, cy, m) => SHAPES.sparkle(cx - 2 * m, cy - 2 * m, 4 * m),
+  leaf: (cx, cy, m) => SHAPES.leaf(cx - 1.5 * m, cy - 1.5 * m, 3 * m),
+};
+const CORE_LIST: [string, string][] = [['square', 'sSquare'], ['rounded', 'sRounded'], ['circle', 'sCircle'], ['heart', 'sHeart'], ['diamond', 'sDiamond'], ['sparkle', 'sSparkle'], ['leaf', 'sLeaf']];
+
+/* ---------- state ---------- */
+type LogoId = 'none' | 'mycar' | 'autocheck';
+type Dir = 'diag' | 'horiz' | 'vert' | 'radial';
+interface State {
+  content: string;
+  dots: string; outline: string; core: string; scale: number;
+  logo: LogoId; logoScale: number;
+  colorMode: 'solid' | 'gradient'; dir: Dir;
+  c1: string; c2: string; bg: string; transparent: boolean; bgRadius: number;
+  markersSame: boolean; m1: string; m2: string;
+  ec: 'L' | 'M' | 'Q' | 'H'; quiet: number; size: number; preset: string;
+}
 const state: State = {
-  type: 'link',
-  fields: { url: 'https://mycar.kz', secType: 'WPA' },
-  dots: 'dots', cornerSq: 'extra-rounded', cornerDot: 'dot',
-  logo: 'mycar',
-  colorMode: 'solid', gradKind: 'linear', dir: 'diag',
-  c1: '#000000', c2: '#000000', bg: '#FFFFFF', transparent: false,
+  content: 'https://mycar.kz',
+  dots: 'circle', outline: 'extra', core: 'circle', scale: 1,
+  logo: 'mycar', logoScale: 1,
+  colorMode: 'solid', dir: 'diag',
+  c1: '#000000', c2: '#000000', bg: '#FFFFFF', transparent: false, bgRadius: 12,
   markersSame: true, m1: '#000000', m2: '#000000',
   ec: 'H', quiet: 4, size: 1024, preset: 'mycar-default',
 };
 
 /* ---------- presets ---------- */
 interface PresetDef { id: string; label: string; swatch: string; apply: Partial<State>; }
-const P = (id: string, label: string, swatch: string, apply: Partial<State>): PresetDef => ({ id, label, swatch, apply });
-const solid = (c: string, bg = '#FFFFFF') => ({ colorMode: 'solid' as const, c1: c, c2: c, bg, m1: c, m2: c, markersSame: true, transparent: false });
+const solid = (c: string, bg = '#FFFFFF'): Partial<State> => ({ colorMode: 'solid', c1: c, c2: c, bg, m1: c, m2: c, markersSame: true, transparent: false });
+const grad = (c1: string, c2: string): Partial<State> => ({ colorMode: 'gradient', dir: 'diag', c1, c2, bg: '#FFFFFF', m1: c1, m2: c2, markersSame: true, transparent: false });
+const brandLook: Partial<State> = { dots: 'circle', outline: 'extra', core: 'circle', scale: 1 };
 const PRESETS: PresetDef[] = [
-  P('mycar-default', 'pMycarD', 'linear-gradient(90deg,#000 50%,#fff 50%)', { ...solid('#000000'), logo: 'mycar', dots: 'dots', cornerSq: 'extra-rounded', cornerDot: 'dot' }),
-  P('mycar-inverse', 'pMycarI', 'linear-gradient(90deg,#fff 50%,#000 50%)', { ...solid('#FFFFFF', '#000000'), logo: 'mycar', dots: 'dots', cornerSq: 'extra-rounded', cornerDot: 'dot' }),
-  P('autocheck-default', 'pAutoD', '#000', { ...solid('#000000'), logo: 'autocheck', dots: 'dots', cornerSq: 'extra-rounded', cornerDot: 'dot' }),
-  P('autocheck-inverse', 'pAutoI', '#fff', { ...solid('#FFFFFF', '#000000'), logo: 'autocheck', dots: 'dots', cornerSq: 'extra-rounded', cornerDot: 'dot' }),
-  P('azure', 'pAzure', '#0068E3', solid('#0068E3')),
-  P('meadow', 'pMeadow', '#18BB4F', solid('#009938')),
-  P('cherry', 'pCherry', '#C92140', solid('#C92140')),
-  P('mandarin', 'pMandarin', '#FF522D', solid('#E8431F')),
-  P('persea', 'pPersea', '#2539D7', solid('#2539D7')),
-  P('sunset', 'pSunset', 'linear-gradient(135deg,#FF522D,#FF228C)', { colorMode: 'gradient', gradKind: 'linear', dir: 'diag', c1: '#FF522D', c2: '#C4126B', bg: '#FFFFFF', m1: '#FF522D', m2: '#C4126B', markersSame: true, transparent: false }),
-  P('ocean', 'pOcean', 'linear-gradient(135deg,#008EFF,#18BB4F)', { colorMode: 'gradient', gradKind: 'linear', dir: 'diag', c1: '#0068E3', c2: '#09AB46', bg: '#FFFFFF', m1: '#0068E3', m2: '#09AB46', markersSame: true, transparent: false }),
+  { id: 'mycar-default', label: 'pMycarD', swatch: 'linear-gradient(90deg,#000 50%,#fff 50%)', apply: { ...solid('#000000'), ...brandLook, logo: 'mycar' } },
+  { id: 'mycar-inverse', label: 'pMycarI', swatch: 'linear-gradient(90deg,#fff 50%,#000 50%)', apply: { ...solid('#FFFFFF', '#000000'), ...brandLook, logo: 'mycar' } },
+  { id: 'autocheck-default', label: 'pAutoD', swatch: '#000', apply: { ...solid('#000000'), ...brandLook, logo: 'autocheck' } },
+  { id: 'autocheck-inverse', label: 'pAutoI', swatch: '#fff', apply: { ...solid('#FFFFFF', '#000000'), ...brandLook, logo: 'autocheck' } },
+  { id: 'azure', label: 'pAzure', swatch: '#0068E3', apply: solid('#0068E3') },
+  { id: 'meadow', label: 'pMeadow', swatch: '#18BB4F', apply: solid('#009938') },
+  { id: 'cherry', label: 'pCherry', swatch: '#C92140', apply: solid('#C92140') },
+  { id: 'mandarin', label: 'pMandarin', swatch: '#FF522D', apply: solid('#E8431F') },
+  { id: 'persea', label: 'pPersea', swatch: '#2539D7', apply: solid('#2539D7') },
+  { id: 'sunset', label: 'pSunset', swatch: 'linear-gradient(135deg,#FF522D,#FF228C)', apply: grad('#FF522D', '#C4126B') },
+  { id: 'ocean', label: 'pOcean', swatch: 'linear-gradient(135deg,#008EFF,#18BB4F)', apply: grad('#0068E3', '#09AB46') },
+  { id: 'hearts', label: 'pHearts', swatch: '#F3434E', apply: { ...solid('#E0203F'), dots: 'heart', outline: 'rounded', core: 'heart', scale: 1.05 } },
+  { id: 'stars', label: 'pStars', swatch: 'linear-gradient(135deg,#2539D7,#008EFF)', apply: { ...grad('#2539D7', '#008EFF'), dots: 'sparkle', outline: 'circle', core: 'sparkle', scale: 1.2 } },
 ];
 
 /* ---------- payload ---------- */
-const esc = (s: string) => s.replace(/([\;,:"])/g, '\\$1');
-function normalizeUrl(u: string): string {
-  const v = u.trim();
-  if (!v) return '';
-  return /^[a-z][a-z0-9+.-]*:/i.test(v) ? v : 'https://' + v;
-}
 function buildPayload(): string {
-  const f = state.fields;
-  switch (state.type) {
-    case 'link': return normalizeUrl(f.url || '');
-    case 'text': return (f.text || '').trim() ? f.text : '';
-    case 'wifi': {
-      if (!(f.ssid || '').trim()) return '';
-      const sec = f.secType || 'WPA';
-      return `WIFI:T:${sec === 'nopass' ? 'nopass' : sec};S:${esc(f.ssid)};${sec === 'nopass' ? '' : `P:${esc(f.pass || '')};`}${f.hidden === '1' ? 'H:true;' : ''};`;
-    }
-    case 'email': {
-      const to = (f.to || '').trim();
-      if (!to) return '';
-      const q: string[] = [];
-      if (f.subject) q.push('subject=' + encodeURIComponent(f.subject));
-      if (f.body) q.push('body=' + encodeURIComponent(f.body));
-      return 'mailto:' + to + (q.length ? '?' + q.join('&') : '');
-    }
-    case 'contact': {
-      if (!(f.first || f.last || f.phone || f.mail)) return '';
-      const l = ['BEGIN:VCARD', 'VERSION:3.0', `N:${f.last || ''};${f.first || ''};;;`, `FN:${[f.first, f.last].filter(Boolean).join(' ')}`];
-      if (f.org) l.push('ORG:' + f.org);
-      if (f.job) l.push('TITLE:' + f.job);
-      if (f.phone) l.push('TEL;TYPE=CELL:' + f.phone);
-      if (f.mail) l.push('EMAIL:' + f.mail);
-      if (f.site) l.push('URL:' + normalizeUrl(f.site));
-      l.push('END:VCARD');
-      return l.join('\n');
-    }
-  }
+  const v = state.content.trim();
+  if (!v) return '';
+  // bare domains and www. addresses become links; everything else is encoded as typed
+  if (!/\s/.test(v) && !/^[a-z][a-z0-9+.-]*:/i.test(v) && /^(www\.)?[^\s/@]+\.[a-z]{2,}(:\d+)?([/?#]\S*)?$/i.test(v)) return 'https://' + v;
+  return state.content;
 }
 
-/* ---------- logo / geometry ---------- */
-interface LogoCfg { spec: LogoSpec; ratio: number; clearW: number; clearH: number; }
-const LOGO_CFG: Record<Exclude<LogoId, 'none'>, LogoCfg> = {
-  mycar: { spec: LOGOS.mycar, ratio: 0.2241, clearW: 0.32, clearH: 0.32 },
-  autocheck: { spec: LOGOS.autocheck, ratio: 0.405, clearW: 0.448, clearH: 0.237 },
-};
-
+/* ---------- colors ---------- */
 function hexToRgb(h: string): [number, number, number] {
   const m = /^#?([0-9a-f]{6})$/i.exec(h); if (!m) return [0, 0, 0];
   const n = parseInt(m[1], 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
@@ -156,76 +169,86 @@ function luminance(h: string): number {
   const c = hexToRgb(h).map((v) => { const s = v / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); });
   return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
 }
-function contrast(a: string, b: string): number {
-  const la = luminance(a), lb = luminance(b); return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
-}
+const contrast = (a: string, b: string) => { const la = luminance(a), lb = luminance(b); return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05); };
 
-function moduleCount(data: string, ec: string): number {
-  const q = qrcode(0, ec as 'L' | 'M' | 'Q' | 'H'); q.addData(data, 'Byte'); q.make(); return q.getModuleCount();
-}
-
-const placeholderCache = new Map<string, string>();
-function placeholder(w: number, h: number): string {
-  const key = `${w}x${h}`; const c = placeholderCache.get(key); if (c) return c;
-  const cv = document.createElement('canvas'); cv.width = 100; cv.height = Math.max(1, Math.round((100 * h) / w));
-  const url = cv.toDataURL('image/png'); placeholderCache.set(key, url); return url;
-}
-
-function gradientFor(c1: string, c2: string) {
-  const rotation = state.dir === 'horiz' ? 0 : state.dir === 'vert' ? Math.PI / 2 : Math.PI / 4;
-  return { type: state.gradKind, rotation, colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }] };
-}
-
+/* ---------- QR rendering ---------- */
+interface LogoCfg { spec: LogoSpec; ratio: number; clearW: number; clearH: number; circle: boolean; }
+const LOGO_CFG: Record<Exclude<LogoId, 'none'>, LogoCfg> = {
+  mycar: { spec: LOGOS.mycar, ratio: 0.2241, clearW: 0.34, clearH: 0.34, circle: true },
+  autocheck: { spec: LOGOS.autocheck, ratio: 0.405, clearW: 0.448, clearH: 0.237, circle: false },
+};
 function effectiveEc(): 'L' | 'M' | 'Q' | 'H' {
-  if (state.logo !== 'none' && (state.ec === 'L' || state.ec === 'M')) return 'Q';
-  return state.ec;
+  return state.logo !== 'none' && (state.ec === 'L' || state.ec === 'M') ? 'Q' : state.ec;
 }
 
-async function buildSvg(text: string, outSize: number): Promise<string> {
-  // The encoder works on bytes: feed it UTF-8 bytes so Cyrillic / Kazakh text scans correctly
-  const data = unescape(encodeURIComponent(text));
-  const ec = effectiveEc();
-  const count = moduleCount(data, ec);
-  const margin = (state.quiet * outSize) / (count + 2 * state.quiet);
+function buildSvg(text: string, outSize: number): string {
+  // the encoder works on bytes: pass UTF-8 so Cyrillic and Kazakh text scans correctly
+  const q = qrcode(0, effectiveEc());
+  q.addData(unescape(encodeURIComponent(text)), 'Byte');
+  q.make();
+  const n = q.getModuleCount();
+  const margin = (state.quiet * outSize) / (n + 2 * state.quiet);
   const inner = outSize - 2 * margin;
-  const useGrad = state.colorMode === 'gradient';
-  const grad = useGrad ? gradientFor(state.c1, state.c2) : undefined;
-  const mOut = state.markersSame ? state.c1 : state.m1;
-  const mCore = state.markersSame ? state.c1 : state.m2;
-  const mGradOut = state.markersSame && useGrad ? grad : undefined;
+  const m = inner / n;
   const cfg = state.logo !== 'none' ? LOGO_CFG[state.logo] : null;
+  const ls = state.logoScale;
 
-  const opts: any = {
-    width: outSize, height: outSize, type: 'svg', data, margin,
-    qrOptions: { errorCorrectionLevel: ec, typeNumber: 0 },
-    dotsOptions: { type: state.dots, color: state.c1, gradient: grad },
-    cornersSquareOptions: { type: state.cornerSq, color: mOut, gradient: mGradOut },
-    cornersDotOptions: { type: state.cornerDot, color: mCore, gradient: mGradOut },
-    backgroundOptions: { color: state.transparent ? '#FFFFFF' : state.bg },
+  const inFinder = (r: number, c: number) => (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7);
+  const cx0 = inner / 2;
+  const cleared = (x: number, y: number) => {
+    if (!cfg) return false;
+    const pad = cfg.circle ? m * 0.35 : 0;
+    if (cfg.circle) { const rad = (cfg.clearW * ls * inner) / 2 + pad; return (x - cx0) ** 2 + (y - cx0) ** 2 < rad * rad; }
+    return Math.abs(x - cx0) < (cfg.clearW * ls * inner) / 2 + pad && Math.abs(y - cx0) < (cfg.clearH * ls * inner) / 2 + pad;
   };
-  if (cfg) {
-    opts.image = placeholder(cfg.clearW, cfg.clearH);
-    opts.imageOptions = { hideBackgroundDots: true, imageSize: Math.max(cfg.clearW, cfg.clearH), margin: 0, crossOrigin: 'anonymous' };
-  }
-  const qr = new QRCodeStyling(opts);
-  const blob = (await qr.getRawData('svg')) as Blob;
-  let svg = await blob.text();
-  svg = svg.replace(/<image[\s\S]*?(\/>|<\/image>)/g, '');
 
-  const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
-  const root = doc.documentElement;
-  if (state.transparent) {
-    root.querySelectorAll('rect[clip-path*="background-color"]').forEach((r) => r.remove());
+  const shape = SHAPES[state.dots] || SHAPES.circle;
+  const s = m * state.scale + (state.dots === 'square' && state.scale >= 1 ? m * 0.01 : 0);
+  const off = (m - s) / 2;
+  let modules = '';
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (!q.isDark(r, c) || inFinder(r, c)) continue;
+      if (cleared(c * m + m / 2, r * m + m / 2)) continue;
+      modules += shape(c * m + off, r * m + off, s);
+    }
   }
-  svg = new XMLSerializer().serializeToString(root);
+
+  const useGrad = state.colorMode === 'gradient';
+  const gid = 'qg';
+  let defs = '';
+  if (useGrad) {
+    const stops = `<stop offset="0" stop-color="${state.c1}"/><stop offset="1" stop-color="${state.c2}"/>`;
+    if (state.dir === 'radial') defs = `<radialGradient id="${gid}" gradientUnits="userSpaceOnUse" cx="${f(inner / 2)}" cy="${f(inner / 2)}" r="${f(inner * 0.72)}">${stops}</radialGradient>`;
+    else {
+      const [x2, y2] = state.dir === 'horiz' ? [inner, 0] : state.dir === 'vert' ? [0, inner] : [inner, inner];
+      defs = `<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${f(x2)}" y2="${f(y2)}">${stops}</linearGradient>`;
+    }
+  }
+  const fillMain = useGrad ? `url(#${gid})` : state.c1;
+  const fillOut = state.markersSame ? fillMain : state.m1;
+  const fillCore = state.markersSame ? fillMain : state.m2;
+
+  const finders = [[0, 0], [n - 7, 0], [0, n - 7]];
+  let rings = '', cores = '';
+  const outlineFn = OUTLINES[state.outline] || OUTLINES.extra;
+  const coreFn = CORES[state.core] || CORES.circle;
+  for (const [fc, fr] of finders) {
+    rings += outlineFn(fc * m, fr * m, m);
+    cores += coreFn((fc + 3.5) * m, (fr + 3.5) * m, m);
+  }
+
+  let body = `<path d="${modules}" fill="${fillMain}"/>` +
+    `<path d="${rings}" fill="${fillOut}" fill-rule="evenodd"/>` +
+    `<path d="${cores}" fill="${fillCore}"/>`;
   if (cfg) {
-    const body = state.c1;
-    const smile = state.transparent ? (luminance(body) > 0.4 ? '#000000' : '#FFFFFF') : state.bg;
-    // logo is centered in the full canvas; ratio is relative to the QR body (without quiet zone)
-    const g = buildLogoGroup(cfg.spec, inner, cfg.ratio, body, smile);
-    svg = svg.replace(/<\/svg>\s*$/, `<g transform="translate(${margin} ${margin})">${g}</g></svg>`);
+    const smile = state.transparent ? (luminance(state.c1) > 0.4 ? '#000000' : '#FFFFFF') : state.bg;
+    body += buildLogoGroup(cfg.spec, inner, cfg.ratio * ls, state.c1, smile);
   }
-  return svg;
+  const bgR = (state.bgRadius / 100) * outSize;
+  const bg = state.transparent ? '' : `<rect width="${outSize}" height="${outSize}" rx="${f(bgR)}" fill="${state.bg}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}">` +
+    (defs ? `<defs>${defs}</defs>` : '') + bg + `<g transform="translate(${f(margin)} ${f(margin)})">${body}</g></svg>`;
 }
 
 /* ---------- export ---------- */
@@ -235,7 +258,7 @@ function svgToPng(svg: string, size: number): Promise<Blob> {
     const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
     img.onload = () => {
       const cv = document.createElement('canvas'); cv.width = size; cv.height = size;
-      const ctx = cv.getContext('2d')!; ctx.drawImage(img, 0, 0, size, size);
+      cv.getContext('2d')!.drawImage(img, 0, 0, size, size);
       URL.revokeObjectURL(url);
       cv.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob'))), 'image/png');
     };
@@ -247,87 +270,60 @@ function saveBlob(blob: Blob, name: string) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
-function fileBase(): string { return 'mycar-qr-' + state.type; }
 
 /* ---------- DOM helpers ---------- */
-const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+const $ = <E extends HTMLElement>(id: string) => document.getElementById(id) as E;
 function toast(msg: string) { const el = $('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1800); }
+const setPressed = (el: HTMLElement, test: (i: number) => boolean) => Array.from(el.children).forEach((c, i) => c.setAttribute('aria-pressed', String(test(i))));
 
 function segment<V extends string | number>(el: HTMLElement, items: { v: V; label: string }[], get: () => V, set: (v: V) => void) {
   el.innerHTML = '';
   items.forEach((it) => {
     const b = document.createElement('button'); b.type = 'button'; b.textContent = it.label;
     b.setAttribute('aria-pressed', String(get() === it.v));
-    b.onclick = () => { set(it.v); Array.from(el.children).forEach((c, i) => c.setAttribute('aria-pressed', String(items[i].v === get()))); onChange(true); };
+    b.onclick = () => { set(it.v); setPressed(el, (i) => items[i].v === get()); onChange(true); };
     el.appendChild(b);
   });
 }
-function chips<V extends string>(el: HTMLElement, items: { v: V; label: string; sw?: string }[], get: () => V, set: (v: V) => void) {
+function chips(el: HTMLElement, items: { v: string; label: string; sw?: string }[], get: () => string, set: (v: string) => void) {
   el.innerHTML = '';
   items.forEach((it) => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'chip';
-    if (it.sw) { const s = document.createElement('span'); s.className = 'sw'; s.style.background = it.sw; b.appendChild(s); }
+    if (it.sw) { const sp = document.createElement('span'); sp.className = 'sw'; sp.style.background = it.sw; b.appendChild(sp); }
     b.appendChild(document.createTextNode(it.label));
     b.setAttribute('aria-pressed', String(get() === it.v));
-    b.onclick = () => { set(it.v); Array.from(el.children).forEach((c, i) => c.setAttribute('aria-pressed', String(items[i].v === get()))); onChange(true); };
+    b.onclick = () => { set(it.v); setPressed(el, (i) => items[i].v === get()); onChange(true); };
     el.appendChild(b);
   });
 }
-
-/* ---------- content panels ---------- */
-const TABS: { id: ContentType; label: string }[] = [
-  { id: 'link', label: 'tLink' }, { id: 'text', label: 'tText' }, { id: 'wifi', label: 'tWifi' }, { id: 'email', label: 'tEmail' }, { id: 'contact', label: 'tContact' },
-];
-type FieldDef = { k: string; label: string; type?: string; area?: boolean; ph?: string; half?: boolean };
-const FIELDS: Record<ContentType, FieldDef[]> = {
-  link: [{ k: 'url', label: 'fUrl', type: 'url', ph: 'https://mycar.kz' }],
-  text: [{ k: 'text', label: 'fText', area: true }],
-  wifi: [{ k: 'ssid', label: 'fSsid' }, { k: 'pass', label: 'fPass', type: 'text' }],
-  email: [{ k: 'to', label: 'fTo', type: 'email', ph: 'hello@mycar.kz' }, { k: 'subject', label: 'fSubject' }, { k: 'body', label: 'fBody', area: true }],
-  contact: [
-    { k: 'first', label: 'fFirst', half: true }, { k: 'last', label: 'fLast', half: true },
-    { k: 'org', label: 'fOrg', half: true }, { k: 'job', label: 'fJob', half: true },
-    { k: 'phone', label: 'fPhone', type: 'tel', half: true, ph: '+7 700 000 00 00' }, { k: 'mail', label: 'fMail', type: 'email', half: true },
-    { k: 'site', label: 'fSite', ph: 'mycar.kz' },
-  ],
+/** Pickers made of small shape icons, drawn with the same path generators as the QR itself. */
+function iconChips(el: HTMLElement, items: [string, string][], icon: (id: string) => string, get: () => string, set: (v: string) => void) {
+  el.innerHTML = '';
+  items.forEach(([id, label]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'icon-chip';
+    b.title = t(label); b.setAttribute('aria-label', t(label));
+    b.innerHTML = `<svg viewBox="0 0 40 40" aria-hidden="true">${icon(id)}</svg>`;
+    b.setAttribute('aria-pressed', String(get() === id));
+    b.onclick = () => { set(id); setPressed(el, (i) => items[i][0] === get()); state.preset = ''; buildPresets(); onChange(true); };
+    el.appendChild(b);
+  });
+}
+const moduleIcon = (id: string) => {
+  let d = ''; const sh = SHAPES[id];
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) d += sh(5 + c * 10.5, 5 + r * 10.5, 9);
+  return `<path d="${d}"/>`;
 };
+const outlineIcon = (id: string) => `<path d="${OUTLINES[id](3, 3, 34 / 7)}" fill-rule="evenodd"/>`;
+const coreIcon = (id: string) => `<path d="${CORES[id](20, 20, 8)}"/>`;
 
-function buildTabs() {
-  const el = $('typeTabs'); el.innerHTML = '';
-  TABS.forEach((tb) => {
-    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.textContent = t(tb.label);
-    b.setAttribute('aria-selected', String(state.type === tb.id));
-    b.onclick = () => { state.type = tb.id; buildTabs(); buildPanel(); onChange(true); };
-    el.appendChild(b);
-  });
-}
-function buildPanel() {
-  const host = $('typePanels'); host.innerHTML = '';
-  const defs = FIELDS[state.type];
-  const wrap = document.createElement('div'); if (state.type === 'contact') wrap.className = 'field-grid';
-  defs.forEach((d) => {
-    const label = document.createElement('label'); label.className = 'field';
-    if (state.type === 'contact' && !d.half) label.style.gridColumn = '1 / -1';
-    const cap = document.createElement('span'); cap.textContent = t(d.label); label.appendChild(cap);
-    const inp: HTMLInputElement | HTMLTextAreaElement = d.area ? document.createElement('textarea') : document.createElement('input');
-    if (!d.area) (inp as HTMLInputElement).type = d.type || 'text';
-    inp.value = state.fields[d.k] || ''; if (d.ph) inp.placeholder = d.ph; inp.autocomplete = 'off';
-    if (d.type === 'url' || d.type === 'email') inp.setAttribute('inputmode', d.type);
-    inp.oninput = () => { state.fields[d.k] = inp.value; onChange(false); };
-    label.appendChild(inp); wrap.appendChild(label);
-  });
-  host.appendChild(wrap);
-  if (state.type === 'wifi') {
-    const row = document.createElement('div'); row.className = 'group';
-    const lab = document.createElement('div'); lab.className = 'label'; lab.textContent = t('fSec'); row.appendChild(lab);
-    const seg = document.createElement('div'); seg.className = 'seg'; row.appendChild(seg);
-    segment(seg, [{ v: 'WPA', label: 'WPA/WPA2' }, { v: 'WEP', label: 'WEP' }, { v: 'nopass', label: t('secNone') }], () => state.fields.secType || 'WPA', (v) => { state.fields.secType = v; });
-    host.appendChild(row);
-    const tg = document.createElement('label'); tg.className = 'toggle-row';
-    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'toggle'; cb.checked = state.fields.hidden === '1';
-    cb.onchange = () => { state.fields.hidden = cb.checked ? '1' : '0'; onChange(false); };
-    tg.append(cb, document.createTextNode(t('fHidden'))); host.appendChild(tg);
-  }
+function slider(el: HTMLElement, label: string, min: number, max: number, step: number, get: () => number, set: (v: number) => void, fmt: (v: number) => string) {
+  el.innerHTML = '';
+  const box = document.createElement('div'); box.className = 'slider';
+  const l = document.createElement('span'); l.className = 's-label'; l.textContent = t(label);
+  const r = document.createElement('input'); r.type = 'range'; r.min = String(min); r.max = String(max); r.step = String(step); r.value = String(get()); r.setAttribute('aria-label', t(label));
+  const v = document.createElement('span'); v.className = 's-val'; v.textContent = fmt(get());
+  r.oninput = () => { set(parseFloat(r.value)); v.textContent = fmt(get()); onChange(false); };
+  box.append(l, r, v); el.appendChild(box);
 }
 
 /* ---------- style controls ---------- */
@@ -342,77 +338,73 @@ function syncColorInputs() {
   $('markerColors').hidden = state.markersSame;
   ($('bg').closest('label') as HTMLElement).style.opacity = state.transparent ? '.4' : '1';
 }
-function bindColor(id: keyof State) {
-  const pick = $(id as string) as HTMLInputElement, txt = $((id as string) + 't') as HTMLInputElement;
-  pick.oninput = () => { (state as any)[id] = pick.value.toUpperCase(); txt.value = pick.value.toUpperCase(); state.preset = ''; markPreset(); onChange(false); };
+function bindColor(id: 'c1' | 'c2' | 'bg' | 'm1' | 'm2') {
+  const pick = $(id) as HTMLInputElement, txt = $(id + 't') as HTMLInputElement;
+  const apply = (v: string) => { state[id] = v.toUpperCase(); state.preset = ''; buildPresets(); onChange(false); };
+  pick.oninput = () => { txt.value = pick.value.toUpperCase(); apply(pick.value); };
   txt.oninput = () => {
     let v = txt.value.trim(); if (v && v[0] !== '#') v = '#' + v;
-    if (/^#[0-9a-f]{6}$/i.test(v)) { (state as any)[id] = v.toUpperCase(); pick.value = v; state.preset = ''; markPreset(); onChange(false); }
+    if (/^#[0-9a-f]{6}$/i.test(v)) { pick.value = v; apply(v); }
   };
 }
-function markPreset() { buildPresets(); }
-
 function buildPresets() {
   chips($('presetChips'), PRESETS.map((p) => ({ v: p.id, label: t(p.label), sw: p.swatch })), () => state.preset, (id) => {
-    const p = PRESETS.find((x) => x.id === id)!; Object.assign(state, p.apply, { preset: id });
+    Object.assign(state, PRESETS.find((x) => x.id === id)!.apply, { preset: id });
     buildStyleControls();
   });
 }
 function buildStyleControls() {
   buildPresets();
-  segment($('logoSeg'), [{ v: 'none' as LogoId, label: t('none') }, { v: 'mycar' as LogoId, label: 'Mycar' }, { v: 'autocheck' as LogoId, label: 'Autocheck' }], () => state.logo, (v) => { state.logo = v; });
-  chips($('dotChips'), ([['square', 'dSquare'], ['dots', 'dDots'], ['rounded', 'dRounded'], ['extra-rounded', 'dExtra'], ['classy', 'dClassy'], ['classy-rounded', 'dClassyR']] as [DotType, string][]).map(([v, l]) => ({ v, label: t(l) })), () => state.dots, (v) => { state.dots = v; });
-  chips($('cornerSqChips'), ([['square', 'cSquare'], ['extra-rounded', 'dExtra'], ['dot', 'cDot']] as [CornerSq, string][]).map(([v, l]) => ({ v, label: t(l) })), () => state.cornerSq, (v) => { state.cornerSq = v; });
-  chips($('cornerDotChips'), ([['square', 'cSquare'], ['dot', 'cDot']] as [CornerDot, string][]).map(([v, l]) => ({ v, label: t(l) })), () => state.cornerDot, (v) => { state.cornerDot = v; });
+  segment($('logoSeg'), [{ v: 'none', label: t('none') }, { v: 'mycar', label: 'Mycar' }, { v: 'autocheck', label: 'Autocheck' }] as { v: LogoId; label: string }[], () => state.logo, (v) => { state.logo = v; });
+  slider($('logoScaleSlider'), 'logoSize', 0.6, 1.4, 0.01, () => state.logoScale, (v) => { state.logoScale = v; }, (v) => v.toFixed(2));
+  iconChips($('dotChips'), MODULE_SHAPES, moduleIcon, () => state.dots, (v) => { state.dots = v; });
+  slider($('scaleSlider'), 'shapeSize', 0.5, 1.3, 0.01, () => state.scale, (v) => { state.scale = v; }, (v) => v.toFixed(2));
+  iconChips($('cornerSqChips'), OUTLINE_LIST, outlineIcon, () => state.outline, (v) => { state.outline = v; });
+  iconChips($('cornerDotChips'), CORE_LIST, coreIcon, () => state.core, (v) => { state.core = v; });
   segment($('colorModeSeg'), [{ v: 'solid', label: t('solid') }, { v: 'gradient', label: t('gradient') }], () => state.colorMode, (v) => { state.colorMode = v as State['colorMode']; state.preset = ''; syncColorInputs(); buildPresets(); });
-  segment($('dirSeg'), [{ v: 'diag', label: t('diag') }, { v: 'horiz', label: t('horiz') }, { v: 'vert', label: t('vert') }, { v: 'radial', label: t('radial') }], () => (state.gradKind === 'radial' ? 'radial' : state.dir), (v) => {
-    if (v === 'radial') state.gradKind = 'radial'; else { state.gradKind = 'linear'; state.dir = v as Dir; } state.preset = ''; buildPresets();
-  });
-  segment($('sizeSeg'), [512, 1024, 2048, 4096].map((n) => ({ v: n, label: String(n) })), () => state.size, (v) => { state.size = v; });
+  segment($('dirSeg'), [{ v: 'diag', label: t('diag') }, { v: 'horiz', label: t('horiz') }, { v: 'vert', label: t('vert') }, { v: 'radial', label: t('radial') }] as { v: Dir; label: string }[], () => state.dir, (v) => { state.dir = v; state.preset = ''; buildPresets(); });
+  slider($('bgRadiusSlider'), 'bgRadius', 0, 50, 1, () => state.bgRadius, (v) => { state.bgRadius = v; }, (v) => v + '%');
+  segment($('sizeSeg'), [512, 1024, 2048, 4096].map((v) => ({ v, label: String(v) })), () => state.size, (v) => { state.size = v; });
   segment($('quietSeg'), [{ v: 4, label: t('modules4') }, { v: 2, label: t('modules2') }, { v: 0, label: t('modules0') }], () => state.quiet, (v) => { state.quiet = v; });
   segment($('ecSeg'), [{ v: 'L', label: 'L · 7%' }, { v: 'M', label: 'M · 15%' }, { v: 'Q', label: 'Q · 25%' }, { v: 'H', label: 'H · 30%' }], () => state.ec, (v) => { state.ec = v as State['ec']; });
   $('ecHint').textContent = t('ecHint');
   syncColorInputs();
 }
 
-/* ---------- render loop ---------- */
-let renderToken = 0; let lastSvg = ''; let debounce = 0;
+/* ---------- render ---------- */
+let lastSvg = ''; let debounce = 0;
 function onChange(immediate: boolean) {
   syncColorInputs();
   clearTimeout(debounce);
-  if (immediate) render(); else debounce = window.setTimeout(render, 120);
+  if (immediate) render(); else debounce = window.setTimeout(render, 40);
 }
-async function render() {
-  const token = ++renderToken;
+function render() {
   const data = buildPayload();
   const preview = $('preview');
   ($('dlPng') as HTMLButtonElement).disabled = ($('dlSvg') as HTMLButtonElement).disabled = ($('copyPng') as HTMLButtonElement).disabled = !data;
   $('payloadText').textContent = data || '—';
-  if (!data) { preview.innerHTML = `<div class="empty">${t('empty').replace('\n', '<br>')}</div>`; lastSvg = ''; return; }
-  try {
-    const svg = await buildSvg(data, 1024);
-    if (token !== renderToken) return;
-    lastSvg = svg; preview.innerHTML = svg;
-    const el = preview.querySelector('svg'); if (el) { el.removeAttribute('width'); el.removeAttribute('height'); el.setAttribute('viewBox', '0 0 1024 1024'); }
-  } catch (e) { console.error(e); }
-  const warn = $('warn'); const msgs: string[] = [];
-  if (!state.transparent && contrast(state.c1, state.bg) < 3) msgs.push(t('lowContrast'));
-  if (state.colorMode === 'gradient' && !state.transparent && contrast(state.c2, state.bg) < 3) { if (!msgs.length) msgs.push(t('lowContrast')); }
+  const warn = $('warn');
+  if (!data) { preview.innerHTML = `<div class="empty">${t('empty').replace('\n', '<br>')}</div>`; lastSvg = ''; warn.hidden = true; return; }
+  try { lastSvg = buildSvg(data, 1024); preview.innerHTML = lastSvg; const el = preview.querySelector('svg'); if (el) { el.removeAttribute('width'); el.removeAttribute('height'); } } catch (e) { console.error(e); }
+  const msgs: string[] = [];
+  const lowC = !state.transparent && (contrast(state.c1, state.bg) < 3 || (state.colorMode === 'gradient' && contrast(state.c2, state.bg) < 3));
+  if (lowC) msgs.push(t('lowContrast'));
+  if (state.scale < 0.7) msgs.push(t('smallShape'));
   if (state.logo !== 'none' && (state.ec === 'L' || state.ec === 'M')) msgs.push(t('noLogoEc'));
   warn.hidden = !msgs.length; warn.textContent = msgs.join(' ');
 }
-
-async function exportSvg(): Promise<string> { return buildSvg(buildPayload(), state.size); }
-$('dlSvg').onclick = async () => { const s = await exportSvg(); saveBlob(new Blob([s], { type: 'image/svg+xml' }), fileBase() + '.svg'); };
-$('dlPng').onclick = async () => { const s = await exportSvg(); saveBlob(await svgToPng(s, state.size), `${fileBase()}-${state.size}.png`); };
+const exportSvg = () => buildSvg(buildPayload(), state.size);
+const fileBase = () => 'mycar-qr';
+$('dlSvg').onclick = () => saveBlob(new Blob([exportSvg()], { type: 'image/svg+xml' }), fileBase() + '.svg');
+$('dlPng').onclick = async () => saveBlob(await svgToPng(exportSvg(), state.size), `${fileBase()}-${state.size}.png`);
 $('copyPng').onclick = async () => {
   try {
-    const s = await exportSvg(); const blob = await svgToPng(s, Math.min(state.size, 2048));
+    const blob = await svgToPng(buildSvg(buildPayload(), Math.min(state.size, 2048)), Math.min(state.size, 2048));
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast(t('copied'));
   } catch { toast(t('copyFail')); }
 };
 
-/* ---------- theme & lang ---------- */
+/* ---------- theme, lang, wiring ---------- */
 $('themeBtn').onclick = () => {
   const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   const next = cur === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = next;
@@ -420,16 +412,19 @@ $('themeBtn').onclick = () => {
 };
 function applyLang() {
   document.documentElement.lang = lang;
-  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((n) => { n.textContent = t(n.dataset.i18n!); });
-  document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((n) => n.setAttribute('aria-label', t(n.dataset.i18nAria!)));
+  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n!); });
+  document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria!)));
   document.querySelectorAll<HTMLElement>('#langSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
 }
 document.querySelectorAll<HTMLElement>('#langSeg button').forEach((b) => {
-  b.onclick = () => { lang = b.dataset.lang as Lang; try { localStorage.setItem('mq-lang', lang); } catch { /* noop */ } applyLang(); buildTabs(); buildPanel(); buildStyleControls(); render(); };
+  b.onclick = () => { lang = b.dataset.lang as Lang; try { localStorage.setItem('mq-lang', lang); } catch { /* noop */ } applyLang(); buildStyleControls(); render(); };
 });
+const contentEl = $('content') as HTMLInputElement;
+contentEl.value = state.content;
+contentEl.oninput = () => { state.content = contentEl.value; onChange(false); };
 $('transparent').onchange = () => { state.transparent = ($('transparent') as HTMLInputElement).checked; onChange(true); };
 $('markersSame').onchange = () => { state.markersSame = ($('markersSame') as HTMLInputElement).checked; onChange(true); };
-(['c1', 'c2', 'bg', 'm1', 'm2'] as (keyof State)[]).forEach(bindColor);
+(['c1', 'c2', 'bg', 'm1', 'm2'] as const).forEach(bindColor);
 
 Object.assign(state, PRESETS[0].apply);
-applyLang(); buildTabs(); buildPanel(); buildStyleControls(); render();
+applyLang(); buildStyleControls(); render();
