@@ -251,7 +251,11 @@ function saveBlob(blob: Blob, name: string) {
 }
 
 /* ---------- DOM helpers ---------- */
-const $ = <E extends HTMLElement>(id: string) => document.getElementById(id) as E;
+// The same code runs as a standalone page (ROOT = document) and embedded straight into a host page inside a
+// Shadow DOM (ROOT = shadow root, set up by embed-setup.ts), so host-page CSS cannot leak in and `sticky` works natively.
+const ROOT: ParentNode & { getElementById(id: string): HTMLElement | null } = (window as any).__MQ_ROOT || document;
+const THEME_HOST: HTMLElement = (window as any).__MQ_HOST || document.documentElement;
+const $ = <E extends HTMLElement>(id: string) => ROOT.getElementById(id) as E;
 type ToastType = 'info' | 'success' | 'warning' | 'danger';
 // icons: filled shape with the glyph cut out in the container colour (Mylo "Info Filled", check, attention triangle, clear)
 const TOAST_ICONS: Record<ToastType, string> = {
@@ -415,17 +419,17 @@ $('copySvg').onclick = async () => {
 
 /* ---------- theme, lang, wiring ---------- */
 $('themeBtn').onclick = () => {
-  const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  const next = cur === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = next;
+  const cur = THEME_HOST.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark'; THEME_HOST.dataset.theme = next;
   try { localStorage.setItem('mq-theme', next); } catch { /* noop */ }
 };
 function applyLang() {
   document.documentElement.lang = lang;
-  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n!); });
-  document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria!)));
-  document.querySelectorAll<HTMLElement>('#langSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  ROOT.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n!); });
+  ROOT.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria!)));
+  ROOT.querySelectorAll<HTMLElement>('#langSeg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
 }
-document.querySelectorAll<HTMLElement>('#langSeg button').forEach((b) => {
+ROOT.querySelectorAll<HTMLElement>('#langSeg button').forEach((b) => {
   b.onclick = () => { lang = b.dataset.lang as Lang; try { localStorage.setItem('mq-lang', lang); } catch { /* noop */ } applyLang(); buildStyleControls(); render(); };
 });
 const contentEl = $('content') as HTMLInputElement;
