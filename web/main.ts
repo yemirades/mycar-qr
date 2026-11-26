@@ -412,3 +412,10 @@ $('markersSame').onchange = () => { state.markersSame = ($('markersSame') as HTM
 
 Object.assign(state, PRESETS[0].apply);
 applyLang(); buildStyleControls(); render();
+
+/* ---------- embedding (Tilda etc.): report page height to the parent frame ---------- */
+if (window.parent !== window) {
+  const post = () => window.parent.postMessage({ type: 'mycar-qr-height', height: document.documentElement.scrollHeight }, '*');
+  new ResizeObserver(post).observe(document.body);
+  post();
+}

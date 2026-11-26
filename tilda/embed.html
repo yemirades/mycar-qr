@@ -1,0 +1,11 @@
+<!-- Tilda: add block "T123 — HTML code" (Other → HTML) to the page promo.mycar.kz/qr and paste this -->
+<iframe id="mycar-qr" src="https://yemirades.github.io/mycar-qr/" title="Mycar QR"
+        allow="clipboard-write" loading="lazy"
+        style="display:block;width:100%;min-height:900px;border:0"></iframe>
+<script>
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'mycar-qr-height') {
+      document.getElementById('mycar-qr').style.height = e.data.height + 'px';
+    }
+  });
+</script>
