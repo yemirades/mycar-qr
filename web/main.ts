@@ -16,7 +16,7 @@ const T: Record<Lang, Record<string, string>> = {
     footer: 'Всё считается в вашем браузере — данные никуда не отправляются.',
     none: 'Нет',
     modules4: '4 модуля', modules2: '2 модуля', modules0: 'Без отступа',
-    empty: 'Введите ссылку или текст,\nчтобы увидеть код', copied: 'PNG скопирован', copyFail: 'Не удалось скопировать — скачайте файл',
+    empty: 'Введите ссылку или текст,\nчтобы увидеть код', copied: 'PNG скопирован', copyFail: 'Не удалось скопировать', copyFailHint: 'Скачайте файл',
     lowContrast: 'Низкий контраст между кодом и фоном — такой QR может не считаться.',
     noLogoEc: 'С логотипом коррекция ошибок будет повышена до Q.',
     smallShape: 'Модули меньше 0,7 читаются хуже — проверьте код сканером.',
@@ -36,7 +36,7 @@ const T: Record<Lang, Record<string, string>> = {
     footer: 'Everything runs in your browser — nothing is sent anywhere.',
     none: 'None',
     modules4: '4 modules', modules2: '2 modules', modules0: 'None',
-    empty: 'Enter a link or text\nto see the code', copied: 'PNG copied', copyFail: 'Copy failed — download the file instead',
+    empty: 'Enter a link or text\nto see the code', copied: 'PNG copied', copyFail: 'Copy failed', copyFailHint: 'Download the file instead',
     lowContrast: 'Low contrast between code and background — it may not scan.',
     noLogoEc: 'With a logo, error correction is raised to Q.',
     smallShape: 'Shapes below 0.7 scan less reliably — test the code with a scanner.',
@@ -253,24 +253,30 @@ function saveBlob(blob: Blob, name: string) {
 /* ---------- DOM helpers ---------- */
 const $ = <E extends HTMLElement>(id: string) => document.getElementById(id) as E;
 type ToastType = 'info' | 'success' | 'warning' | 'danger';
+// icons: filled shape with the glyph cut out in the container colour (Mylo "Info Filled", check, attention triangle, clear)
 const TOAST_ICONS: Record<ToastType, string> = {
-  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
-  success: '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.7L16 9.8"/>',
-  warning: '<path d="M12 4 3 19.5h18L12 4Z"/><path d="M12 10v4.5M12 17h.01"/>',
-  danger: '<path d="M6 6l12 12M18 6 6 18"/>',
+  info: '<circle cx="12" cy="12" r="10"/><path class="mark" d="M12 11v5M12 8h.01"/>',
+  success: '<circle cx="12" cy="12" r="10"/><path class="mark" d="m7.8 12.4 2.9 2.8 5.5-5.6"/>',
+  warning: '<path d="M10.3 4.2a2 2 0 0 1 3.4 0l8 13.8A2 2 0 0 1 20 21H4a2 2 0 0 1-1.7-3l8-13.8Z"/><path class="mark" d="M12 9.5v4.2M12 16.8h.01"/>',
+  danger: '<path class="line" d="M6 6l12 12M18 6 6 18"/>',
 };
-let toastTimer = 0;
-/** Mirrors UIToast / UIToastContent: status colour + icon, title, tap to dismiss, auto-dismiss after 3 s. */
-function toast(msg: string, type: ToastType = 'success') {
+const TOAST_PRIORITY: Record<ToastType, number> = { danger: 3, warning: 2, success: 1, info: 1 };
+let toastTimer = 0; let toastType: ToastType | null = null;
+/**
+ * Mylo toast: informational only. One at a time, no queue, no close button; it disappears after 3 s.
+ * A toast with higher priority (danger > warning > success/info) replaces the current one, a lower one is not shown.
+ */
+function toast(title: string, type: ToastType = 'info', subtitle = '') {
+  if (toastType && TOAST_PRIORITY[type] < TOAST_PRIORITY[toastType]) return;
   const slot = $('toast'); clearTimeout(toastTimer);
   slot.innerHTML = '';
   const card = document.createElement('div'); card.className = 'toast-content ' + type; card.setAttribute('role', 'status'); card.setAttribute('aria-live', 'polite');
   card.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${TOAST_ICONS[type]}</svg>`;
-  const p = document.createElement('p'); p.textContent = msg; card.appendChild(p);
-  const close = () => { card.classList.add('leaving'); setTimeout(() => card.remove(), 200); };
-  card.onclick = () => { clearTimeout(toastTimer); close(); };
-  slot.appendChild(card);
-  toastTimer = window.setTimeout(close, 3000);
+  const box = document.createElement('div'); box.className = 'toast-text';
+  const p = document.createElement('p'); p.className = 'toast-title'; p.textContent = title; box.appendChild(p);
+  if (subtitle) { const sp = document.createElement('p'); sp.className = 'toast-sub'; sp.textContent = subtitle; box.appendChild(sp); }
+  card.appendChild(box); slot.appendChild(card); toastType = type;
+  toastTimer = window.setTimeout(() => { card.classList.add('leaving'); setTimeout(() => { card.remove(); toastType = null; }, 200); }, 3000);
 }
 const setPressed = (el: HTMLElement, test: (i: number) => boolean) => Array.from(el.children).forEach((c, i) => c.setAttribute('aria-pressed', String(test(i))));
 
@@ -400,11 +406,11 @@ $('copyPng').onclick = async () => {
   try {
     const blob = await svgToPng(buildSvg(buildPayload(), Math.min(state.size, 2048)), Math.min(state.size, 2048));
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast(t('copied'));
-  } catch { toast(t('copyFail'), 'danger'); }
+  } catch { toast(t('copyFail'), 'danger', t('copyFailHint')); }
 };
 
 $('copySvg').onclick = async () => {
-  try { await navigator.clipboard.writeText(exportSvg()); toast(t('svgCopied')); } catch { toast(t('copyFail'), 'danger'); }
+  try { await navigator.clipboard.writeText(exportSvg()); toast(t('svgCopied')); } catch { toast(t('copyFail'), 'danger', t('copyFailHint')); }
 };
 
 /* ---------- theme, lang, wiring ---------- */
@@ -434,6 +440,7 @@ applyLang(); buildStyleControls(); render();
 
 /* ---------- embedding (Tilda etc.): report page height to the parent frame ---------- */
 if (window.parent !== window) {
+  document.documentElement.classList.add('embedded');
   const post = () => window.parent.postMessage({ type: 'mycar-qr-height', height: document.documentElement.scrollHeight }, '*');
   new ResizeObserver(post).observe(document.body);
   post();
