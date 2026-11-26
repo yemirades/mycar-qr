@@ -438,10 +438,31 @@ $('markersSame').onchange = () => { state.markersSame = ($('markersSame') as HTM
 Object.assign(state, PRESETS[0].apply);
 applyLang(); buildStyleControls(); render();
 
-/* ---------- embedding (Tilda etc.): report page height to the parent frame ---------- */
+/* ---------- embedding (Tilda etc.) ----------
+ * The parent frame resizes the iframe to the full page height, so inside the frame there is no scrolling:
+ * `position: sticky` and `position: fixed` would not follow the visitor. The parent therefore posts where its
+ * viewport is (top offset inside the frame + height) and we place the toast and the preview column ourselves. */
 if (window.parent !== window) {
   document.documentElement.classList.add('embedded');
   const post = () => window.parent.postMessage({ type: 'mycar-qr-height', height: document.documentElement.scrollHeight }, '*');
   new ResizeObserver(post).observe(document.body);
   post();
+
+  let vp: { top: number; height: number } | null = null;
+  const place = () => {
+    if (!vp) return;
+    document.documentElement.style.setProperty('--vt', Math.max(0, vp.top) + 'px');
+    const col = document.querySelector<HTMLElement>('.preview-col'); const layout = col?.parentElement;
+    if (!col || !layout) return;
+    if (window.innerWidth <= 880) { col.style.transform = ''; return; }
+    const max = Math.max(0, layout.clientHeight - col.offsetHeight - 32 - 8);
+    const y = Math.min(max, Math.max(0, vp.top + 16 - layout.offsetTop));
+    col.style.transform = `translateY(${Math.round(y)}px)`;
+  };
+  window.addEventListener('message', (e) => {
+    const d = e.data;
+    if (e.source !== window.parent || !d || d.type !== 'mycar-qr-viewport' || typeof d.top !== 'number' || typeof d.height !== 'number') return;
+    vp = { top: d.top, height: d.height }; place();
+  });
+  window.addEventListener('resize', place);
 }

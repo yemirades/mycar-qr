@@ -1,12 +1,26 @@
-<!-- Tilda: add block "T123 — HTML code" (Other → HTML) to the page promo.mycar.kz/qr and paste this -->
+<!-- Tilda: block "T123 — HTML code" on the page promo.mycar.kz/qr -->
 <iframe id="mycar-qr" src="https://yemirades.github.io/mycar-qr/" title="Mycar QR"
         allow="clipboard-write" loading="lazy"
         style="display:block;width:100%;min-height:900px;border:0"></iframe>
 <script>
-  window.addEventListener('message', function (e) {
-    if (e.origin !== 'https://yemirades.github.io') return;
-    if (e.data && e.data.type === 'mycar-qr-height') {
-      document.getElementById('mycar-qr').style.height = e.data.height + 'px';
+  (function () {
+    var frame = document.getElementById('mycar-qr');
+    var ORIGIN = 'https://yemirades.github.io';
+    // tell the page where the visitor's viewport is inside the frame (keeps the preview sticky and the toast on screen)
+    function sendViewport() {
+      if (!frame.contentWindow) return;
+      var r = frame.getBoundingClientRect();
+      frame.contentWindow.postMessage({ type: 'mycar-qr-viewport', top: -r.top, height: window.innerHeight }, ORIGIN);
     }
-  });
+    window.addEventListener('message', function (e) {
+      if (e.origin !== ORIGIN) return;
+      if (e.data && e.data.type === 'mycar-qr-height') {
+        frame.style.height = e.data.height + 'px';
+        sendViewport();
+      }
+    });
+    window.addEventListener('scroll', sendViewport, { passive: true });
+    window.addEventListener('resize', sendViewport);
+    frame.addEventListener('load', sendViewport);
+  })();
 </script>

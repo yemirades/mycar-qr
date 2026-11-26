@@ -176,8 +176,9 @@ button { cursor: pointer; }
 /* Toast — Mylo "toast" (Figma): 20px radius, 12/16 padding, 24px status icon, body-lg title + optional body-md subtitle,
    elevation-sm shadow. Not interactive: no close button, no tap, no focus. One at a time, shown for 3 s. */
 .toast-slot { position: fixed; top: max(16px, env(safe-area-inset-top)); left: 16px; right: 16px; display: flex; justify-content: center; pointer-events: none; z-index: 10; }
-html.embedded .toast-slot { position: absolute; top: auto; left: 0; right: 0; bottom: calc(100% + 8px); }
-.actions { position: relative; }
+/* inside an iframe the page is as tall as its content, so the parent tells us where its viewport is (--vt) */
+html.embedded .toast-slot { position: absolute; top: calc(var(--vt, 0px) + 16px); }
+html.embedded .preview-col { position: relative; will-change: transform; }
 .toast-content {
   --toast-bg: #FFFFFF; --toast-fg: #000000; --toast-sub: #535E6B;
   display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 20px; width: 100%; max-width: 360px;
