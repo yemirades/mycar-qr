@@ -68,9 +68,10 @@ button { cursor: pointer; }
 .brand-sub { display: block; color: var(--text-secondary); font-size: 13px; }
 .top-actions { display: flex; align-items: center; gap: 8px; }
 .icon-btn {
-  width: 36px; height: 36px; display: grid; place-items: center; border-radius: var(--radius-sm);
+  flex: none; width: 36px; height: 36px; padding: 0; display: grid; place-items: center; border-radius: var(--radius-sm);
   background: var(--surface-top); border: 1px solid var(--border-default);
 }
+.icon-btn svg { display: block; }
 .icon-btn:hover { border-color: var(--text-secondary); }
 
 .layout {
@@ -117,7 +118,7 @@ button { cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--surface-top); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .seg-sm { flex-wrap: nowrap; }
 .seg-sm button { padding: 5px 9px; font-size: 13px; }
-.brand { min-width: 0; }
+.brand { flex: 1; min-width: 0; }
 .top-actions { flex: none; }
 
 /* Chips */
@@ -206,7 +207,19 @@ html.embedded .preview-col { position: relative; will-change: transform; }
 @media (max-width: 880px) {
   .layout { grid-template-columns: minmax(0, 1fr); }
   .preview-col { position: static; order: -1; }
-  .preview { max-width: 360px; margin: 0 auto; }
+  .preview { max-width: 420px; margin: 0 auto; }
+}
+/* phones: blocks run edge to edge */
+@media (max-width: 600px) {
+  .top { padding: 16px 16px 12px; gap: 8px; }
+  .brand-name { font-size: 17px; }
+  .brand-sub { font-size: 12px; }
+  .layout { padding: 0 0 24px; gap: 8px; }
+  .col { gap: 8px; }
+  .card { border-radius: 0; padding: 16px; box-shadow: none; }
+  .preview-card { padding: 16px; }
+  .preview { max-width: none; }
+  .foot { padding: 8px 16px 24px; }
 }
 @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } .field-grid { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
