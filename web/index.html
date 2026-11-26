@@ -17,7 +17,6 @@
 <body>
 <header class="top">
   <a class="brand" href="./">
-    <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 60 60" width="36" height="36"><rect width="60" height="60" rx="14" fill="currentColor"/><path d="M12 30h36a18 18 0 0 1-36 0Z" fill="var(--surface-top)"/></svg></span>
     <span>
       <span class="brand-name">Mycar QR</span>
       <span class="brand-sub" data-i18n="tagline"></span>
@@ -72,20 +71,10 @@
         </div>
       </div>
 
-      <div class="group">
-        <div class="label" data-i18n="color"></div>
-        <div class="seg" id="colorModeSeg" role="group"></div>
-      </div>
       <div class="colors" id="colorRow">
-        <label class="color-field"><span data-i18n="color1"></span><span class="color-input"><input type="color" id="c1"><input type="text" id="c1t" maxlength="7" spellcheck="false"></span></label>
-        <label class="color-field" id="c2wrap"><span data-i18n="color2"></span><span class="color-input"><input type="color" id="c2"><input type="text" id="c2t" maxlength="7" spellcheck="false"></span></label>
+        <label class="color-field"><span data-i18n="color"></span><span class="color-input"><input type="color" id="c1"><input type="text" id="c1t" maxlength="7" spellcheck="false"></span></label>
         <label class="color-field"><span data-i18n="background"></span><span class="color-input"><input type="color" id="bg"><input type="text" id="bgt" maxlength="7" spellcheck="false"></span></label>
       </div>
-      <div class="group" id="dirGroup">
-        <div class="label" data-i18n="direction"></div>
-        <div class="seg" id="dirSeg" role="group"></div>
-      </div>
-
       <div id="bgRadiusSlider" class="group"></div>
       <label class="toggle-row"><input type="checkbox" id="transparent" class="toggle"><span data-i18n="transparent"></span></label>
       <label class="toggle-row"><input type="checkbox" id="markersSame" class="toggle" checked><span data-i18n="markersSame"></span></label>
@@ -127,6 +116,7 @@
         <button type="button" class="btn btn-primary" id="dlPng" data-i18n="downloadPng"></button>
         <button type="button" class="btn btn-secondary" id="dlSvg" data-i18n="downloadSvg"></button>
         <button type="button" class="btn btn-ghost" id="copyPng" data-i18n="copyPng"></button>
+        <button type="button" class="btn btn-ghost" id="copySvg" data-i18n="copySvg"></button>
       </div>
     </section>
   </aside>

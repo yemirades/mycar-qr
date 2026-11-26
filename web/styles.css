@@ -64,7 +64,6 @@ button { cursor: pointer; }
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 .brand { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
-.brand-mark { color: var(--fill-inverse); display: grid; }
 .brand-name { display: block; font-weight: 700; font-size: 18px; letter-spacing: -.01em; }
 .brand-sub { display: block; color: var(--text-secondary); font-size: 13px; }
 .top-actions { display: flex; align-items: center; gap: 8px; }
@@ -169,7 +168,7 @@ button { cursor: pointer; }
 .btn-primary:hover { opacity: .88; }
 .btn-secondary { background: var(--surface-grey); color: var(--text-primary); }
 .btn-secondary:hover { background: var(--border-soft); }
-.btn-ghost { grid-column: 1 / -1; background: transparent; border-color: var(--border-default); color: var(--text-primary); }
+.btn-ghost { background: transparent; border-color: var(--border-default); color: var(--text-primary); }
 .btn-ghost:hover { border-color: var(--text-secondary); }
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 

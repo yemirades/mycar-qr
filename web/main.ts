@@ -9,12 +9,12 @@ const T: Record<Lang, Record<string, string>> = {
     content: 'Содержимое', contentLabel: 'Ссылка или текст', style: 'Стиль', params: 'Параметры',
     presets: 'Готовые стили', logo: 'Логотип в центре', logoSize: 'Размер логотипа',
     modules: 'Модули', shapeSize: 'Размер модуля', markerOutline: 'Контур маркера', markerCore: 'Ядро маркера',
-    color: 'Цвет', color1: 'Цвет 1', color2: 'Цвет 2', background: 'Фон', direction: 'Направление', bgRadius: 'Скругление фона',
+    color: 'Цвет', background: 'Фон', bgRadius: 'Скругление фона',
     transparent: 'Прозрачный фон', markersSame: 'Маркеры того же цвета, что и модули',
     pngSize: 'Размер PNG', quiet: 'Тихая зона', ec: 'Коррекция ошибок',
-    payload: 'Что попадёт в код', downloadPng: 'Скачать PNG', downloadSvg: 'Скачать SVG', copyPng: 'Скопировать PNG',
+    payload: 'Что попадёт в код', downloadPng: 'Скачать PNG', downloadSvg: 'Скачать SVG', copyPng: 'Копировать PNG', copySvg: 'Копировать SVG', svgCopied: 'SVG скопирован',
     footer: 'Всё считается в вашем браузере — данные никуда не отправляются.',
-    none: 'Нет', solid: 'Сплошной', gradient: 'Градиент', radial: 'Радиальный', diag: 'Диагональ', horiz: 'Горизонталь', vert: 'Вертикаль',
+    none: 'Нет',
     modules4: '4 модуля', modules2: '2 модуля', modules0: 'Без отступа',
     empty: 'Введите ссылку или текст,\nчтобы увидеть код', copied: 'PNG скопирован', copyFail: 'Не удалось скопировать — скачайте файл',
     lowContrast: 'Низкий контраст между кодом и фоном — такой QR может не считаться.',
@@ -29,12 +29,12 @@ const T: Record<Lang, Record<string, string>> = {
     content: 'Content', contentLabel: 'Link or text', style: 'Style', params: 'Parameters',
     presets: 'Ready-made presets', logo: 'Center logo', logoSize: 'Logo size',
     modules: 'Modules', shapeSize: 'Shape size', markerOutline: 'Marker outline', markerCore: 'Marker core',
-    color: 'Color', color1: 'Color 1', color2: 'Color 2', background: 'Background', direction: 'Direction', bgRadius: 'Background radius',
+    color: 'Color', background: 'Background', bgRadius: 'Background radius',
     transparent: 'Transparent background', markersSame: 'Markers use the modules color',
     pngSize: 'PNG size', quiet: 'Quiet zone', ec: 'Error correction',
-    payload: 'What goes into the code', downloadPng: 'Download PNG', downloadSvg: 'Download SVG', copyPng: 'Copy PNG',
+    payload: 'What goes into the code', downloadPng: 'Download PNG', downloadSvg: 'Download SVG', copyPng: 'Copy PNG', copySvg: 'Copy SVG', svgCopied: 'SVG copied',
     footer: 'Everything runs in your browser — nothing is sent anywhere.',
-    none: 'None', solid: 'Solid', gradient: 'Gradient', radial: 'Radial', diag: 'Diagonal', horiz: 'Horizontal', vert: 'Vertical',
+    none: 'None',
     modules4: '4 modules', modules2: '2 modules', modules0: 'None',
     empty: 'Enter a link or text\nto see the code', copied: 'PNG copied', copyFail: 'Copy failed — download the file instead',
     lowContrast: 'Low contrast between code and background — it may not scan.',
@@ -110,13 +110,11 @@ const CORE_LIST: [string, string][] = [['square', 'sSquare'], ['rounded', 'sRoun
 
 /* ---------- state ---------- */
 type LogoId = 'none' | 'mycar' | 'autocheck';
-type Dir = 'diag' | 'horiz' | 'vert' | 'radial';
 interface State {
   content: string;
   dots: string; outline: string; core: string; scale: number;
   logo: LogoId; logoScale: number;
-  colorMode: 'solid' | 'gradient'; dir: Dir;
-  c1: string; c2: string; bg: string; transparent: boolean; bgRadius: number;
+  c1: string; bg: string; transparent: boolean; bgRadius: number;
   markersSame: boolean; m1: string; m2: string;
   ec: 'L' | 'M' | 'Q' | 'H'; quiet: number; size: number; preset: string;
 }
@@ -124,18 +122,16 @@ const state: State = {
   content: 'https://mycar.kz',
   dots: 'circle', outline: 'extra', core: 'circle', scale: 1,
   logo: 'mycar', logoScale: 1,
-  colorMode: 'solid', dir: 'diag',
-  c1: '#000000', c2: '#000000', bg: '#FFFFFF', transparent: false, bgRadius: 12,
+  c1: '#000000', bg: '#FFFFFF', transparent: false, bgRadius: 12,
   markersSame: true, m1: '#000000', m2: '#000000',
   ec: 'H', quiet: 4, size: 1024, preset: 'mycar-default',
 };
 
 /* ---------- presets ---------- */
 interface PresetDef { id: string; label: string; swatch: string; apply: Partial<State>; }
-const solid = (c: string, bg = '#FFFFFF'): Partial<State> => ({ colorMode: 'solid', c1: c, c2: c, bg, m1: c, m2: c, markersSame: true, transparent: false });
-const grad = (c1: string, c2: string): Partial<State> => ({ colorMode: 'gradient', dir: 'diag', c1, c2, bg: '#FFFFFF', m1: c1, m2: c2, markersSame: true, transparent: false });
+const solid = (c: string, bg = '#FFFFFF'): Partial<State> => ({ c1: c, bg, m1: c, m2: c, markersSame: true, transparent: false });
 const brandLook: Partial<State> = { dots: 'circle', outline: 'extra', core: 'circle', scale: 1 };
-const autocheckLook: Partial<State> = { dots: 'liquid', outline: 'rounded', core: 'rounded', scale: 1 };
+const autocheckLook: Partial<State> = { dots: 'liquid', outline: 'rounded', core: 'circle', scale: 1 };
 const PRESETS: PresetDef[] = [
   { id: 'mycar-default', label: 'pMycarD', swatch: 'linear-gradient(90deg,#000 50%,#fff 50%)', apply: { ...solid('#000000'), ...brandLook, logo: 'mycar' } },
   { id: 'mycar-inverse', label: 'pMycarI', swatch: 'linear-gradient(90deg,#fff 50%,#000 50%)', apply: { ...solid('#FFFFFF', '#000000'), ...brandLook, logo: 'mycar' } },
@@ -208,18 +204,7 @@ function buildSvg(text: string, outSize: number): string {
     for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (dark(r, c)) modules += shape(c * m + off, r * m + off, sz);
   }
 
-  const useGrad = state.colorMode === 'gradient';
-  const gid = 'qg';
-  let defs = '';
-  if (useGrad) {
-    const stops = `<stop offset="0" stop-color="${state.c1}"/><stop offset="1" stop-color="${state.c2}"/>`;
-    if (state.dir === 'radial') defs = `<radialGradient id="${gid}" gradientUnits="userSpaceOnUse" cx="${f(inner / 2)}" cy="${f(inner / 2)}" r="${f(inner * 0.72)}">${stops}</radialGradient>`;
-    else {
-      const [x2, y2] = state.dir === 'horiz' ? [inner, 0] : state.dir === 'vert' ? [0, inner] : [inner, inner];
-      defs = `<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${f(x2)}" y2="${f(y2)}">${stops}</linearGradient>`;
-    }
-  }
-  const fillMain = useGrad ? `url(#${gid})` : state.c1;
+  const fillMain = state.c1;
   const fillOut = state.markersSame ? fillMain : state.m1;
   const fillCore = state.markersSame ? fillMain : state.m2;
 
@@ -242,7 +227,7 @@ function buildSvg(text: string, outSize: number): string {
   const bgR = (state.bgRadius / 100) * outSize;
   const bg = state.transparent ? '' : `<rect width="${outSize}" height="${outSize}" rx="${f(bgR)}" fill="${state.bg}"/>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${outSize}" height="${outSize}" viewBox="0 0 ${outSize} ${outSize}">` +
-    (defs ? `<defs>${defs}</defs>` : '') + bg + `<g transform="translate(${f(margin)} ${f(margin)})">${body}</g></svg>`;
+    bg + `<g transform="translate(${f(margin)} ${f(margin)})">${body}</g></svg>`;
 }
 
 /* ---------- export ---------- */
@@ -328,16 +313,14 @@ function slider(el: HTMLElement, label: string, min: number, max: number, step: 
 /* ---------- style controls ---------- */
 function syncColorInputs() {
   const set = (id: string, v: string) => { ($(id) as HTMLInputElement).value = v; };
-  set('c1', state.c1); set('c1t', state.c1); set('c2', state.c2); set('c2t', state.c2); set('bg', state.bg); set('bgt', state.bg);
+  set('c1', state.c1); set('c1t', state.c1); set('bg', state.bg); set('bgt', state.bg);
   set('m1', state.m1); set('m1t', state.m1); set('m2', state.m2); set('m2t', state.m2);
   ($('transparent') as HTMLInputElement).checked = state.transparent;
   ($('markersSame') as HTMLInputElement).checked = state.markersSame;
-  $('c2wrap').hidden = state.colorMode !== 'gradient';
-  $('dirGroup').hidden = state.colorMode !== 'gradient';
   $('markerColors').hidden = state.markersSame;
   ($('bg').closest('label') as HTMLElement).style.opacity = state.transparent ? '.4' : '1';
 }
-function bindColor(id: 'c1' | 'c2' | 'bg' | 'm1' | 'm2') {
+function bindColor(id: 'c1' | 'bg' | 'm1' | 'm2') {
   const pick = $(id) as HTMLInputElement, txt = $(id + 't') as HTMLInputElement;
   const apply = (v: string) => { state[id] = v.toUpperCase(); state.preset = ''; buildPresets(); onChange(false); };
   pick.oninput = () => { txt.value = pick.value.toUpperCase(); apply(pick.value); };
@@ -360,8 +343,6 @@ function buildStyleControls() {
   slider($('scaleSlider'), 'shapeSize', 0.5, 1.3, 0.01, () => state.scale, (v) => { state.scale = v; }, (v) => v.toFixed(2));
   iconChips($('cornerSqChips'), OUTLINE_LIST, outlineIcon, () => state.outline, (v) => { state.outline = v; });
   iconChips($('cornerDotChips'), CORE_LIST, coreIcon, () => state.core, (v) => { state.core = v; });
-  segment($('colorModeSeg'), [{ v: 'solid', label: t('solid') }, { v: 'gradient', label: t('gradient') }], () => state.colorMode, (v) => { state.colorMode = v as State['colorMode']; state.preset = ''; syncColorInputs(); buildPresets(); });
-  segment($('dirSeg'), [{ v: 'diag', label: t('diag') }, { v: 'horiz', label: t('horiz') }, { v: 'vert', label: t('vert') }, { v: 'radial', label: t('radial') }] as { v: Dir; label: string }[], () => state.dir, (v) => { state.dir = v; state.preset = ''; buildPresets(); });
   slider($('bgRadiusSlider'), 'bgRadius', 0, 50, 1, () => state.bgRadius, (v) => { state.bgRadius = v; }, (v) => v + '%');
   segment($('sizeSeg'), [512, 1024, 2048, 4096].map((v) => ({ v, label: String(v) })), () => state.size, (v) => { state.size = v; });
   segment($('quietSeg'), [{ v: 4, label: t('modules4') }, { v: 2, label: t('modules2') }, { v: 0, label: t('modules0') }], () => state.quiet, (v) => { state.quiet = v; });
@@ -380,13 +361,13 @@ function onChange(immediate: boolean) {
 function render() {
   const data = buildPayload();
   const preview = $('preview');
-  ($('dlPng') as HTMLButtonElement).disabled = ($('dlSvg') as HTMLButtonElement).disabled = ($('copyPng') as HTMLButtonElement).disabled = !data;
+  ['dlPng', 'dlSvg', 'copyPng', 'copySvg'].forEach((id) => { ($(id) as HTMLButtonElement).disabled = !data; });
   $('payloadText').textContent = data || '—';
   const warn = $('warn');
   if (!data) { preview.innerHTML = `<div class="empty">${t('empty').replace('\n', '<br>')}</div>`; lastSvg = ''; warn.hidden = true; return; }
   try { lastSvg = buildSvg(data, 1024); preview.innerHTML = lastSvg; const el = preview.querySelector('svg'); if (el) { el.removeAttribute('width'); el.removeAttribute('height'); } } catch (e) { console.error(e); }
   const msgs: string[] = [];
-  const lowC = !state.transparent && (contrast(state.c1, state.bg) < 3 || (state.colorMode === 'gradient' && contrast(state.c2, state.bg) < 3));
+  const lowC = !state.transparent && contrast(state.c1, state.bg) < 3;
   if (lowC) msgs.push(t('lowContrast'));
   if (state.scale < 0.7) msgs.push(t('smallShape'));
   if (state.logo !== 'none' && (state.ec === 'L' || state.ec === 'M')) msgs.push(t('noLogoEc'));
@@ -401,6 +382,10 @@ $('copyPng').onclick = async () => {
     const blob = await svgToPng(buildSvg(buildPayload(), Math.min(state.size, 2048)), Math.min(state.size, 2048));
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast(t('copied'));
   } catch { toast(t('copyFail')); }
+};
+
+$('copySvg').onclick = async () => {
+  try { await navigator.clipboard.writeText(exportSvg()); toast(t('svgCopied')); } catch { toast(t('copyFail')); }
 };
 
 /* ---------- theme, lang, wiring ---------- */
@@ -423,7 +408,7 @@ contentEl.value = state.content;
 contentEl.oninput = () => { state.content = contentEl.value; onChange(false); };
 $('transparent').onchange = () => { state.transparent = ($('transparent') as HTMLInputElement).checked; onChange(true); };
 $('markersSame').onchange = () => { state.markersSame = ($('markersSame') as HTMLInputElement).checked; onChange(true); };
-(['c1', 'c2', 'bg', 'm1', 'm2'] as const).forEach(bindColor);
+(['c1', 'bg', 'm1', 'm2'] as const).forEach(bindColor);
 
 Object.assign(state, PRESETS[0].apply);
 applyLang(); buildStyleControls(); render();
