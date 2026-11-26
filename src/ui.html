@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #0a0a0a;
+    --muted: #6b6b6b;
+    --border: #e5e5e5;
+    --border-strong: #0a0a0a;
+    --accent: #f65c14;
+    --radius: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --fg: #f5f5f5;
+      --muted: #9a9a9a;
+      --border: #2e2e2e;
+      --border-strong: #f5f5f5;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    font-size: 12px;
+    background: var(--bg);
+    color: var(--fg);
+    padding: 16px;
+  }
+  .section { margin-bottom: 16px; }
+  .label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 12px;
+    font-family: inherit;
+  }
+  input:focus { outline: none; border-color: var(--border-strong); }
+
+  .row { display: flex; gap: 8px; align-items: center; }
+  .row .label { margin: 0; flex: 1; text-transform: none; letter-spacing: 0; font-size: 12px; color: var(--fg); }
+
+  .preview-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  #preview { width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; }
+  .preview-frame { padding: 18px; border-radius: 28px; display: flex; align-items: center; justify-content: center; }
+  #preview svg, #preview canvas { width: 220px !important; height: auto !important; display: block; }
+
+  #presets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .preset {
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .preset:hover { border-color: var(--border-strong); }
+  .preset.active { border-color: var(--border-strong); }
+  .preset-label { font-size: 12px; font-weight: 600; }
+  .preset-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Segmented control for Logo and Style */
+  .seg {
+    display: flex;
+    gap: 4px;
+    background: var(--border);
+    padding: 3px;
+    border-radius: var(--radius);
+  }
+  .seg-btn {
+    flex: 1;
+    padding: 7px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: 0.12s;
+  }
+  .seg-btn:hover { color: var(--fg); }
+  .seg-btn.active {
+    background: var(--bg);
+    color: var(--fg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  /* Toggle */
+  .toggle { position: relative; width: 32px; height: 18px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0;
+    background: var(--border);
+    border-radius: 18px;
+    transition: 0.15s;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    left: 2px; top: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.15s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--border-strong); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(14px); }
+
+  .actions { display: flex; gap: 8px; margin-top: 8px; }
+  button.primary, button.ghost {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  button.primary {
+    background: var(--border-strong);
+    color: var(--bg);
+  }
+  button.primary:disabled { opacity: 0.5; cursor: default; }
+  button.ghost {
+    background: transparent;
+    color: var(--fg);
+    border-color: var(--border);
+  }
+</style>
+</head>
+<body>
+  <div class="section preview-wrap">
+    <div id="preview"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">URL</div>
+    <input type="text" id="url" placeholder="https://mycar.kz">
+  </div>
+
+  <div class="section">
+    <div class="label">Logo</div>
+    <div id="logos" class="seg"></div>
+  </div>
+
+  <div class="section">
+    <div class="label">Style</div>
+    <div id="styles" class="seg"></div>
+  </div>
+
+  <div class="section">
+    <div class="row">
+      <div class="label">Container size (px)</div>
+      <input type="number" id="size" min="160" max="2048" step="32" style="width: 80px;">
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="ghost" id="cancel">Close</button>
+    <button class="primary" id="insert">Insert QR</button>
+  </div>
+
+  <script>__JS__</script>
+</body>
+</html>

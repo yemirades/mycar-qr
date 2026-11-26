@@ -1,0 +1,22 @@
+{
+  "name": "mycar-qr",
+  "version": "0.1.0",
+  "description": "QR code generator with Mycar brand styling for Figma",
+  "scripts": {
+    "build": "npm run build:code && npm run build:ui",
+    "build:code": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es2017",
+    "build:ui": "esbuild src/ui.ts --bundle --outfile=dist/ui.js --target=es2017 && node scripts/inline-ui.js",
+    "watch": "npm run build && esbuild src/code.ts --bundle --outfile=dist/code.js --target=es2017 --watch",
+    "build:web": "node scripts/build-web.js",
+    "dev:web": "node scripts/build-web.js --serve"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.100.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "qr-code-styling": "^1.6.0",
+    "qrcode-generator": "^1.5.2"
+  }
+}
