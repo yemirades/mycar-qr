@@ -252,7 +252,26 @@ function saveBlob(blob: Blob, name: string) {
 
 /* ---------- DOM helpers ---------- */
 const $ = <E extends HTMLElement>(id: string) => document.getElementById(id) as E;
-function toast(msg: string) { const el = $('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1800); }
+type ToastType = 'info' | 'success' | 'warning' | 'danger';
+const TOAST_ICONS: Record<ToastType, string> = {
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  success: '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.7L16 9.8"/>',
+  warning: '<path d="M12 4 3 19.5h18L12 4Z"/><path d="M12 10v4.5M12 17h.01"/>',
+  danger: '<path d="M6 6l12 12M18 6 6 18"/>',
+};
+let toastTimer = 0;
+/** Mirrors UIToast / UIToastContent: status colour + icon, title, tap to dismiss, auto-dismiss after 3 s. */
+function toast(msg: string, type: ToastType = 'success') {
+  const slot = $('toast'); clearTimeout(toastTimer);
+  slot.innerHTML = '';
+  const card = document.createElement('div'); card.className = 'toast-content ' + type; card.setAttribute('role', 'status'); card.setAttribute('aria-live', 'polite');
+  card.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${TOAST_ICONS[type]}</svg>`;
+  const p = document.createElement('p'); p.textContent = msg; card.appendChild(p);
+  const close = () => { card.classList.add('leaving'); setTimeout(() => card.remove(), 200); };
+  card.onclick = () => { clearTimeout(toastTimer); close(); };
+  slot.appendChild(card);
+  toastTimer = window.setTimeout(close, 3000);
+}
 const setPressed = (el: HTMLElement, test: (i: number) => boolean) => Array.from(el.children).forEach((c, i) => c.setAttribute('aria-pressed', String(test(i))));
 
 function segment<V extends string | number>(el: HTMLElement, items: { v: V; label: string }[], get: () => V, set: (v: V) => void) {
@@ -381,11 +400,11 @@ $('copyPng').onclick = async () => {
   try {
     const blob = await svgToPng(buildSvg(buildPayload(), Math.min(state.size, 2048)), Math.min(state.size, 2048));
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast(t('copied'));
-  } catch { toast(t('copyFail')); }
+  } catch { toast(t('copyFail'), 'danger'); }
 };
 
 $('copySvg').onclick = async () => {
-  try { await navigator.clipboard.writeText(exportSvg()); toast(t('svgCopied')); } catch { toast(t('copyFail')); }
+  try { await navigator.clipboard.writeText(exportSvg()); toast(t('svgCopied')); } catch { toast(t('copyFail'), 'danger'); }
 };
 
 /* ---------- theme, lang, wiring ---------- */
