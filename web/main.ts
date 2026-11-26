@@ -60,53 +60,27 @@ function rr(x: number, y: number, w: number, h: number, [a, b, c, d]: number[]):
     `L${f(x + d)} ${f(y + h)}C${f(x + d - d * K)} ${f(y + h)} ${f(x)} ${f(y + h - d + d * K)} ${f(x)} ${f(y + h - d)}` +
     `L${f(x)} ${f(y + a)}C${f(x)} ${f(y + a - a * K)} ${f(x + a - a * K)} ${f(y)} ${f(x + a)} ${f(y)}Z`;
 }
-/** Transforms a unit-box path (M, L, C, Z with absolute coordinates) into the box (x, y, s). */
-function tr(d: string, x: number, y: number, s: number): string {
-  let i = 0;
-  return d.replace(/-?\d*\.\d+|-?\d+/g, (n) => f((i++ % 2 === 0 ? x : y) + parseFloat(n) * s));
-}
-const poly = (pts: number[][]) => 'M' + pts.map((p) => `${f(p[0])} ${f(p[1])}`).join('L') + 'Z';
-
-const HEART = 'M.5 .93 C.12 .64 0 .45 0 .29 C0 .13 .12 .03 .26 .03 C.37 .03 .46 .09 .5 .19 C.54 .09 .63 .03 .74 .03 C.88 .03 1 .13 1 .29 C1 .45 .88 .64 .5 .93Z';
-const SPARKLE = 'M.5 0 C.5 .3 .7 .5 1 .5 C.7 .5 .5 .7 .5 1 C.5 .7 .3 .5 0 .5 C.3 .5 .5 .3 .5 0Z';
-
 type ShapeFn = (x: number, y: number, s: number) => string;
 const SHAPES: Record<string, ShapeFn> = {
   square: (x, y, s) => rr(x, y, s, s, [0, 0, 0, 0]),
-  rounded: (x, y, s) => rr(x, y, s, s, [s * 0.3, s * 0.3, s * 0.3, s * 0.3]),
   circle: (x, y, s) => rr(x, y, s, s, [s / 2, s / 2, s / 2, s / 2]),
-  heart: (x, y, s) => tr(HEART, x, y, s),
-  diamond: (x, y, s) => poly([[x + s / 2, y], [x + s, y + s / 2], [x + s / 2, y + s], [x, y + s / 2]]),
-  sparkle: (x, y, s) => tr(SPARKLE, x, y, s),
-  leaf: (x, y, s) => rr(x, y, s, s, [s / 2, 0, s / 2, 0]),
-  hex: (x, y, s) => poly([[x + s / 2, y], [x + s * 0.93, y + s * 0.25], [x + s * 0.93, y + s * 0.75], [x + s / 2, y + s], [x + s * 0.07, y + s * 0.75], [x + s * 0.07, y + s * 0.25]]),
 };
-const MODULE_SHAPES: [string, string][] = [['square', 'sSquare'], ['rounded', 'sRounded'], ['circle', 'sCircle'], ['heart', 'sHeart'], ['diamond', 'sDiamond'], ['sparkle', 'sSparkle'], ['leaf', 'sLeaf'], ['hex', 'sHex']];
+const MODULE_SHAPES: [string, string][] = [['square', 'sSquare'], ['circle', 'sCircle']];
 
 /** Marker outline: ring made of an outer and an inner shape (even-odd fill). m = module size, 7x7 modules box at (ox, oy). */
 const OUTLINES: Record<string, (ox: number, oy: number, m: number) => string> = {
-  square: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [0, 0, 0, 0]) + rr(ox + m, oy + m, 5 * m, 5 * m, [0, 0, 0, 0]),
   rounded: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [2 * m, 2 * m, 2 * m, 2 * m]) + rr(ox + m, oy + m, 5 * m, 5 * m, [1.1 * m, 1.1 * m, 1.1 * m, 1.1 * m]),
   extra: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [3 * m, 3 * m, 3 * m, 3 * m]) + rr(ox + m, oy + m, 5 * m, 5 * m, [2 * m, 2 * m, 2 * m, 2 * m]),
   circle: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [3.5 * m, 3.5 * m, 3.5 * m, 3.5 * m]) + rr(ox + m, oy + m, 5 * m, 5 * m, [2.5 * m, 2.5 * m, 2.5 * m, 2.5 * m]),
-  diamond: (ox, oy, m) => {
-    const cx = ox + 3.5 * m, cy = oy + 3.5 * m, R = 3.8 * m, r = 2.5 * m;
-    return poly([[cx, cy - R], [cx + R, cy], [cx, cy + R], [cx - R, cy]]) + poly([[cx, cy - r], [cx + r, cy], [cx, cy + r], [cx - r, cy]]);
-  },
-  leaf: (ox, oy, m) => rr(ox, oy, 7 * m, 7 * m, [3.5 * m, 0, 3.5 * m, 0]) + rr(ox + m, oy + m, 5 * m, 5 * m, [2.5 * m, 0, 2.5 * m, 0]),
 };
-const OUTLINE_LIST: [string, string][] = [['square', 'sSquare'], ['rounded', 'sRounded'], ['extra', 'sExtra'], ['circle', 'sCircle'], ['diamond', 'sDiamond'], ['leaf', 'sLeaf']];
+const OUTLINE_LIST: [string, string][] = [['rounded', 'sRounded'], ['extra', 'sExtra'], ['circle', 'sCircle']];
 
 const CORES: Record<string, (cx: number, cy: number, m: number) => string> = {
   square: (cx, cy, m) => SHAPES.square(cx - 1.5 * m, cy - 1.5 * m, 3 * m),
-  rounded: (cx, cy, m) => SHAPES.rounded(cx - 1.5 * m, cy - 1.5 * m, 3 * m),
+  rounded: (cx, cy, m) => rr(cx - 1.5 * m, cy - 1.5 * m, 3 * m, 3 * m, [0.9 * m, 0.9 * m, 0.9 * m, 0.9 * m]),
   circle: (cx, cy, m) => SHAPES.circle(cx - 1.5 * m, cy - 1.5 * m, 3 * m),
-  heart: (cx, cy, m) => SHAPES.heart(cx - 1.75 * m, cy - 1.75 * m, 3.5 * m),
-  diamond: (cx, cy, m) => SHAPES.diamond(cx - 1.9 * m, cy - 1.9 * m, 3.8 * m),
-  sparkle: (cx, cy, m) => SHAPES.sparkle(cx - 2 * m, cy - 2 * m, 4 * m),
-  leaf: (cx, cy, m) => SHAPES.leaf(cx - 1.5 * m, cy - 1.5 * m, 3 * m),
 };
-const CORE_LIST: [string, string][] = [['square', 'sSquare'], ['rounded', 'sRounded'], ['circle', 'sCircle'], ['heart', 'sHeart'], ['diamond', 'sDiamond'], ['sparkle', 'sSparkle'], ['leaf', 'sLeaf']];
+const CORE_LIST: [string, string][] = [['square', 'sSquare'], ['rounded', 'sRounded'], ['circle', 'sCircle']];
 
 /* ---------- state ---------- */
 type LogoId = 'none' | 'mycar' | 'autocheck';
@@ -140,15 +114,6 @@ const PRESETS: PresetDef[] = [
   { id: 'mycar-inverse', label: 'pMycarI', swatch: 'linear-gradient(90deg,#fff 50%,#000 50%)', apply: { ...solid('#FFFFFF', '#000000'), ...brandLook, logo: 'mycar' } },
   { id: 'autocheck-default', label: 'pAutoD', swatch: '#000', apply: { ...solid('#000000'), ...brandLook, logo: 'autocheck' } },
   { id: 'autocheck-inverse', label: 'pAutoI', swatch: '#fff', apply: { ...solid('#FFFFFF', '#000000'), ...brandLook, logo: 'autocheck' } },
-  { id: 'azure', label: 'pAzure', swatch: '#0068E3', apply: solid('#0068E3') },
-  { id: 'meadow', label: 'pMeadow', swatch: '#18BB4F', apply: solid('#009938') },
-  { id: 'cherry', label: 'pCherry', swatch: '#C92140', apply: solid('#C92140') },
-  { id: 'mandarin', label: 'pMandarin', swatch: '#FF522D', apply: solid('#E8431F') },
-  { id: 'persea', label: 'pPersea', swatch: '#2539D7', apply: solid('#2539D7') },
-  { id: 'sunset', label: 'pSunset', swatch: 'linear-gradient(135deg,#FF522D,#FF228C)', apply: grad('#FF522D', '#C4126B') },
-  { id: 'ocean', label: 'pOcean', swatch: 'linear-gradient(135deg,#008EFF,#18BB4F)', apply: grad('#0068E3', '#09AB46') },
-  { id: 'hearts', label: 'pHearts', swatch: '#F3434E', apply: { ...solid('#E0203F'), dots: 'heart', outline: 'rounded', core: 'heart', scale: 1.05 } },
-  { id: 'stars', label: 'pStars', swatch: 'linear-gradient(135deg,#2539D7,#008EFF)', apply: { ...grad('#2539D7', '#008EFF'), dots: 'sparkle', outline: 'circle', core: 'sparkle', scale: 1.2 } },
 ];
 
 /* ---------- payload ---------- */
