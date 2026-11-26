@@ -209,14 +209,14 @@ html.embedded .preview-col { position: relative; will-change: transform; }
   .preview-col { position: static; order: -1; }
   .preview { max-width: 420px; margin: 0 auto; }
 }
-/* phones: blocks run edge to edge */
+/* phones: blocks run edge to edge, corners stay rounded */
 @media (max-width: 600px) {
   .top { padding: 16px 16px 12px; gap: 8px; }
   .brand-name { font-size: 17px; }
   .brand-sub { font-size: 12px; }
   .layout { padding: 0 0 24px; gap: 8px; }
   .col { gap: 8px; }
-  .card { border-radius: 0; padding: 16px; box-shadow: none; }
+  .card { padding: 16px; }
   .preview-card { padding: 16px; }
   .preview { max-width: none; }
   .foot { padding: 8px 16px 24px; }
