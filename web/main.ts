@@ -71,7 +71,7 @@ const MODULE_SHAPES: [string, string][] = [['square', 'sSquare'], ['circle', 'sC
  * "Linked" modules (Autocheck guide): neighbouring dark modules merge into one shape,
  * and a corner is rounded only where it has no neighbour on either side of it.
  * A lone module becomes a circle, the end of a line becomes a pill.
- * dark(r, c): the module is drawn; joined(r, c): counts as a neighbour for rounding (dark or part of the logo hole).
+ * dark(r, c): the module is drawn; joined(r, c): counts as a neighbour for rounding (only real dark modules, so edges facing the logo hole are rounded too).
  */
 function liquid(rows: number, cols: number, dark: (r: number, c: number) => boolean, joined: (r: number, c: number) => boolean, m: number, scale: number): string {
   const s = m * scale;
@@ -194,8 +194,8 @@ function buildSvg(text: string, outSize: number): string {
   const dark = (r: number, c: number) => r >= 0 && c >= 0 && r < n && c < n && q.isDark(r, c) && !inFinder(r, c) && !isCleared(r, c);
   let modules = '';
   if (state.dots === 'liquid') {
-    // cells inside the logo hole count as neighbours, so the edge along the hole stays flat
-    const joined = (r: number, c: number) => dark(r, c) || (r >= 0 && c >= 0 && r < n && c < n && !inFinder(r, c) && isCleared(r, c));
+    // cells inside the logo hole do NOT count as neighbours: edges that face the logo get rounded like any free edge
+    const joined = dark;
     modules = liquid(n, n, dark, joined, m, state.scale);
   } else {
     const shape = SHAPES[state.dots] || SHAPES.circle;
